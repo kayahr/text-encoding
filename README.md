@@ -1,14 +1,12 @@
 Text Encoding
 =============
 
-This project is a heavily refactored clone of an old abandoned
-[text-encoding](https://github.com/inexorabletash/text-encoding/) library with the following changes:
+This project is a heavily refactored clone of an old abandoned [text-encoding](https://github.com/inexorabletash/text-encoding/) library with the following changes:
 
 * Refactored into a modern TypeScript project.
 * Separated the monolithic script into many logical modules.
 * Each encoding is a separate module and can be loaded individually if needed.
-* No longer a polyfill for the [Encoding API](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API) but a API compatible replacement with advanced features like encoding support for not just
-UTF-8.
+* No longer a polyfill for the [Encoding API](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API) but a API compatible replacement with advanced features like encoding support for not just UTF-8.
 
 Usage
 -----
