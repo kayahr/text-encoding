@@ -1,0 +1,87 @@
+{
+    "$schema": "http://json.schemastore.org/package",
+    "name": "@kayahr/text-encoding",
+    "version": "1.0.0",
+    "description": "Text encoder and decoder",
+    "keywords": [
+        "typescript",
+        "text",
+        "encoding",
+        "encode",
+        "decoding",
+        "decode"
+    ],
+    "license": "MIT",
+    "author": "Klaus Reimer <k@ailis.de>",
+    "repository": "github:kayahr/text-encoding",
+    "homepage": "https://github.com/kayahr/text-encoding",
+    "bugs": "https://github.com/kayahr/text-encoding/issues",
+    "funding": "https://github.com/kayahr/text-encoding?sponsor=1",
+    "publishConfig": {
+        "access": "public"
+    },
+    "files": [
+        "lib/main/",
+        "src/main/"
+    ],
+    "exports": {
+        ".": "./lib/main/index.js",
+        "./no-encodings": "./lib/main/index-no-encodings.js",
+        "./encodings/*.js": "./lib/main/encodings/*.js",
+        "./encodings/*": "./lib/main/encodings/*.js"
+    },
+    "types": "lib/main/index.d.ts",
+    "typesVersions": {
+        "*": {
+            "no-encodings": [
+                "lib/main/index-no-encodings.d.ts"
+            ]
+        }
+    },
+    "scripts": {
+        "clean": "rimraf lib coverage doc/api",
+        "compile": "tsc",
+        "watch": "tsc -w",
+        "check": "jest",
+        "coverage": "jest --coverage",
+        "doc": "typedoc --excludePrivate --includes doc --out doc/api --entryPointStrategy expand src/main",
+        "lint": "eslint --max-warnings 0 --ext .ts src",
+        "cspell": "cspell --no-progress",
+        "prepare": "npm run clean && npm run compile",
+        "test": "npm run cspell && npm run lint && npm run check"
+    },
+    "jest": {
+        "projects": [
+            {
+                "displayName": "node",
+                "testEnvironment": "jest-environment-node-single-context",
+                "testMatch": [
+                    "<rootDir>/lib/test/**/*.test.js"
+                ]
+            }
+        ],
+        "collectCoverageFrom": [
+            "<rootDir>/lib/main/**/*.js"
+        ]
+    },
+    "devDependencies": {
+        "@kayahr/eslint-config": "1.6.1",
+        "@kayahr/jest-electron-runner": "4.0.5",
+        "@types/jest": "27.0.2",
+        "@types/node": "16.11.6",
+        "@typescript-eslint/eslint-plugin": "5.3.0",
+        "@typescript-eslint/parser": "5.3.0",
+        "cspell": "5.12.6",
+        "eslint": "7.32.0",
+        "eslint-plugin-deprecation": "1.2.1",
+        "eslint-plugin-simple-import-sort": "7.0.0",
+        "jest": "27.3.1",
+        "jest-environment-node-single-context": "27.2.0",
+        "rimraf": "3.0.2",
+        "typedoc": "0.22.7",
+        "typescript": "4.4.4"
+    },
+    "dependencies": {
+        "tslib": "^2.3.1"
+    }
+}

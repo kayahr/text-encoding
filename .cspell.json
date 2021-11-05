@@ -1,0 +1,38 @@
+{
+    "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
+    "version": "0.2",
+    "files": [
+        "**/*"
+    ],
+    "enabledLanguageIds": [
+        "markdown",
+        "typescript"
+    ],
+    "ignorePaths": [
+        "node_modules",
+        "coverage",
+        "data/**",
+        "doc/api/**",
+        "src/sandbox/**",
+        "src/test/data/**",
+        "package-lock.json",
+        "git",
+        "lib",
+        "dist",
+        "*.log",
+        "*.tgz"
+    ],
+    "words": [
+        "CDEFGH",
+        "datastream",
+        "eucjp",
+        "euckr",
+        "kayahr",
+        "ponyfill",
+        "Reimer",
+        "substeps",
+        "SUPERSETS",
+        "typedoc"
+    ],
+    "language": "en"
+}

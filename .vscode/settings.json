@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "lib": true,
+        "node_modules": true,
+        "coverage": true,
+        "doc/api": true
+    },
+    "typescript.tsdk": "node_modules/typescript/lib"
+}
