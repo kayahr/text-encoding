@@ -22,7 +22,8 @@
     },
     "files": [
         "lib/main/",
-        "src/main/"
+        "src/main/",
+        "data/"
     ],
     "exports": {
         ".": "./lib/main/index.js",
