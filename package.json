@@ -1,7 +1,7 @@
 {
     "$schema": "http://json.schemastore.org/package",
     "name": "@kayahr/text-encoding",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Text encoder and decoder",
     "keywords": [
         "typescript",
@@ -68,7 +68,6 @@
                     "<rootDir>/lib/test/**/*.test.js"
                 ]
             }
-
         ],
         "collectCoverageFrom": [
             "<rootDir>/lib/main/**/*.js"
