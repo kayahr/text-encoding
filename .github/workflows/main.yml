@@ -1,0 +1,23 @@
+name: main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: npm ci
+      - name: Test
+        run: npm test
+      - name: Build API Doc
+        run: npm run doc
+      - name: Deploy API Doc
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          folder: doc/api

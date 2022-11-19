@@ -1,6 +1,8 @@
 Text Encoding
 =============
 
+[GitHub] | [NPM] | [API Doc]
+
 This project is a heavily refactored clone of an old abandoned [text-encoding](https://github.com/inexorabletash/text-encoding/) library with the following changes:
 
 * Refactored into a modern TypeScript project.
@@ -87,3 +89,7 @@ Supported encodings
 | windows-1257   | cp1257, x-cp1257
 | windows-1258   | cp1258, x-cp1258
 | x-mac-cyrillic | x-mac-ukrainian
+
+[API Doc]: https://kayahr.github.io/text-encoding/
+[GitHub]: https://github.com/kayahr/text-encoding
+[NPM]: https://www.npmjs.com/package/@kayahr/text-encoding
