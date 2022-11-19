@@ -17,7 +17,7 @@ export interface Encoder {
      * Encodes the next code point(s) in the given buffer and returns the encoded bytes.
      *
      * @param buffer - The buffer containing the code points to encode.
-     * @return The encoded byte(s) to emit, or [[FINISHED]] when encoding is finished.
+     * @return The encoded byte(s) to emit, or {@link ./constants/FINISHED} when encoding is finished.
      */
     encode(buffer: ByteBuffer): number | number[] | typeof FINISHED;
 }

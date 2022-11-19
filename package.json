@@ -42,14 +42,12 @@
     "scripts": {
         "clean": "rimraf lib coverage doc/api",
         "compile": "tsc",
-        "watch": "tsc -w",
         "check": "jest",
-        "coverage": "jest --coverage",
-        "doc": "typedoc --excludePrivate --includes doc --out doc/api --entryPointStrategy expand src/main",
+        "doc": "typedoc",
         "lint": "eslint --max-warnings 0 --ext .ts src",
         "cspell": "cspell --no-progress",
         "prepare": "npm run clean && npm run compile",
-        "test": "npm run cspell && npm run lint && npm run check"
+        "test": "npm run check && npm run lint && npm run doc -- --emit none && npm run cspell"
     },
     "jest": {
         "projects": [
@@ -75,22 +73,22 @@
     },
     "devDependencies": {
         "@kayahr/eslint-config": "2.5.0",
-        "@kayahr/jest-electron-runner": "5.1.1",
-        "@types/jest": "28.1.6",
-        "@types/node": "18.6.3",
-        "@typescript-eslint/eslint-plugin": "5.31.0",
-        "@typescript-eslint/parser": "5.31.0",
-        "cspell": "6.5.0",
-        "eslint": "8.20.0",
-        "eslint-plugin-deprecation": "1.3.2",
-        "eslint-plugin-simple-import-sort": "7.0.0",
-        "jest": "28.1.3",
-        "jest-environment-node-single-context": "28.1.0",
+        "@kayahr/jest-electron-runner": "29.0.0",
+        "@types/jest": "29.2.3",
+        "@types/node": "18.11.9",
+        "@typescript-eslint/eslint-plugin": "5.43.0",
+        "@typescript-eslint/parser": "5.43.0",
+        "cspell": "6.14.3",
+        "eslint": "8.28.0",
+        "eslint-plugin-deprecation": "1.3.3",
+        "eslint-plugin-simple-import-sort": "8.0.0",
+        "jest": "29.3.1",
+        "jest-environment-node-single-context": "29.0.0",
         "rimraf": "3.0.2",
-        "typedoc": "0.23.9",
-        "typescript": "4.7.4"
+        "typedoc": "0.23.21",
+        "typescript": "4.9.3"
     },
     "dependencies": {
-        "tslib": "^2.4.0"
+        "tslib": "^2.4.1"
     }
 }
