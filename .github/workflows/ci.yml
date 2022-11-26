@@ -1,17 +1,17 @@
 name: ci
-
-on:
-  push:
-    branches-ignore:
-      - main
-  pull_request:
-  workflow_dispatch:
-
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 16.x, 18.x ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Build
         run: npm ci
       - name: Test
@@ -20,3 +20,9 @@ jobs:
           run: npm test
       - name: Build API Doc
         run: npm run doc
+      - name: Deploy API Doc
+        if: ${{ github.ref == 'refs/heads/main' && matrix.node-version == '18.x' }}
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          folder: doc/api
