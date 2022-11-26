@@ -35,8 +35,19 @@ When importing the module from `@kayahr/text-encoding` then all provided encodin
 
 ```typescript
 import { TextEncoder } from "@kayahr/text-encoding/no-encodings";
+```
+
+When doing this then no encodings are loaded and only UTF-8 is supported. When you later need a specific encoding then use imports like this:
+
+```typescript
 import "@kayahr/text-encoding/encodings/shift_jis";
 import "@kayahr/text-encoding/encodings/utf-8";
+```
+
+Or import all encodings:
+
+```typescript
+import "@kayahr/text-encoding/encodings";
 ```
 
 There is also a helper function for creating a text encoder which returns an implementation of the original TextEncoder (if present), when encoding is UTF-8 and an implementation of the custom TextEncoder from this library when encoding is not UTF-8:

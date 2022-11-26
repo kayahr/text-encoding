@@ -29,7 +29,8 @@
         ".": "./lib/main/index.js",
         "./no-encodings": "./lib/main/index-no-encodings.js",
         "./encodings/*.js": "./lib/main/encodings/*.js",
-        "./encodings/*": "./lib/main/encodings/*.js"
+        "./encodings/*": "./lib/main/encodings/*.js",
+        "./encodings": "./lib/main/encodings.js"
     },
     "types": "lib/main/index.d.ts",
     "typesVersions": {
@@ -72,13 +73,13 @@
         ]
     },
     "devDependencies": {
-        "@kayahr/eslint-config": "2.5.0",
-        "@kayahr/jest-electron-runner": "29.0.0",
+        "@kayahr/eslint-config": "2.6.0",
+        "@kayahr/jest-electron-runner": "29.1.1",
         "@types/jest": "29.2.3",
         "@types/node": "18.11.9",
-        "@typescript-eslint/eslint-plugin": "5.43.0",
-        "@typescript-eslint/parser": "5.43.0",
-        "cspell": "6.14.3",
+        "@typescript-eslint/eslint-plugin": "5.44.0",
+        "@typescript-eslint/parser": "5.44.0",
+        "cspell": "6.15.0",
         "eslint": "8.28.0",
         "eslint-plugin-deprecation": "1.3.3",
         "eslint-plugin-simple-import-sort": "8.0.0",
