@@ -41,7 +41,6 @@ When doing this then no encodings are loaded and only UTF-8 is supported. When y
 
 ```typescript
 import "@kayahr/text-encoding/encodings/shift_jis";
-import "@kayahr/text-encoding/encodings/utf-8";
 ```
 
 Or import all encodings:
