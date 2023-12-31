@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as windows_1258 from "../../../data/windows-1258.cp.json";
+import * as windows1258 from "../../../data/windows-1258.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -15,6 +15,6 @@ registerEncoding(
         "windows-1258",
         "x-cp1258"
     ],
-    SingleByteDecoder.forCodePoints(windows_1258),
-    SingleByteEncoder.forCodePoints(windows_1258)
+    SingleByteDecoder.forCodePoints(windows1258),
+    SingleByteEncoder.forCodePoints(windows1258)
 );

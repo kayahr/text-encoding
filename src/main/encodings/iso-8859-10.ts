@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as iso_8859_10 from "../../../data/iso-8859-10.cp.json";
+import * as iso885910 from "../../../data/iso-8859-10.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -19,6 +19,6 @@ registerEncoding(
         "l6",
         "latin6"
     ],
-    SingleByteDecoder.forCodePoints(iso_8859_10),
-    SingleByteEncoder.forCodePoints(iso_8859_10)
+    SingleByteDecoder.forCodePoints(iso885910),
+    SingleByteEncoder.forCodePoints(iso885910)
 );

@@ -4,7 +4,6 @@
  */
 
 import { ByteBuffer } from "./ByteBuffer";
-import { FINISHED } from "./constants";
 
 /** Encoder constructor type. */
 export type EncoderConstructor = new () => Encoder;
@@ -19,5 +18,5 @@ export interface Encoder {
      * @param buffer - The buffer containing the code points to encode.
      * @return The encoded byte(s) to emit, or {@link ./constants/FINISHED} when encoding is finished.
      */
-    encode(buffer: ByteBuffer): number | number[] | typeof FINISHED;
+    encode(buffer: ByteBuffer): number | number[];
 }

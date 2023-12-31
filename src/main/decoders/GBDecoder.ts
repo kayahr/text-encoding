@@ -4,7 +4,7 @@
  */
 
 import * as gb18030 from "../../../data/gb18030.cp.json";
-import * as gb18030_ranges from "../../../data/gb18030.ranges.json";
+import * as gb18030ranges from "../../../data/gb18030.ranges.json";
 import { AbstractDecoder } from "../AbstractDecoder";
 import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
 import { FINISHED } from "../constants";
@@ -25,7 +25,7 @@ function getCodePoint(index: number): number | null {
     }
     let offset = 0;
     let codePointOffset = 0;
-    const idx = gb18030_ranges;
+    const idx = gb18030ranges;
     for (const entry of idx) {
         if (entry[0] > index) {
             break;

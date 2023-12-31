@@ -9,7 +9,7 @@ import { TextEncoder } from "../main/TextEncoder";
 import eucjp from "./data/euc-jp-decoded";
 import euckr from "./data/euc-kr-decoded";
 import gbk from "./data/gbk-decoded";
-import shift_jis from "./data/shift_jis-decoded";
+import shiftJIS from "./data/shift_jis-decoded";
 import { readData } from "./util/readData";
 
 const UTF8_ENCODING = [ "utf-8" ];
@@ -83,7 +83,7 @@ describe("TextEncoder", () => {
         expect(new TextEncoder("gbk").encode(gbk)).toEqual(encoded);
     });
     it("can encode shift_jis", async () => {
-        expect(new TextEncoder("shift_jis").encode(shift_jis)).toEqual(await readData("shift_jis-encoded.txt"));
+        expect(new TextEncoder("shift_jis").encode(shiftJIS)).toEqual(await readData("shift_jis-encoded.txt"));
         expect(new TextEncoder("shift_jis").encode("\u306B\u307B\u3093")).toEqual(
                 new Uint8Array([ 0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1 ])); // Nihon)
     });

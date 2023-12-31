@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as iso_8859_2 from "../../../data/iso-8859-2.cp.json";
+import * as iso88592 from "../../../data/iso-8859-2.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -21,6 +21,6 @@ registerEncoding(
         "l2",
         "latin2"
     ],
-    SingleByteDecoder.forCodePoints(iso_8859_2),
-    SingleByteEncoder.forCodePoints(iso_8859_2)
+    SingleByteDecoder.forCodePoints(iso88592),
+    SingleByteEncoder.forCodePoints(iso88592)
 );

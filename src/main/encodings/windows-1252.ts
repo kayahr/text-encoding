@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as windows_1252 from "../../../data/windows-1252.cp.json";
+import * as windows1252 from "../../../data/windows-1252.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -29,6 +29,6 @@ registerEncoding(
         "windows-1252",
         "x-cp1252"
     ],
-    SingleByteDecoder.forCodePoints(windows_1252),
-    SingleByteEncoder.forCodePoints(windows_1252)
+    SingleByteDecoder.forCodePoints(windows1252),
+    SingleByteEncoder.forCodePoints(windows1252)
 );

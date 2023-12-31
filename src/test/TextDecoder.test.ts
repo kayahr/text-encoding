@@ -12,7 +12,7 @@ import eucjp from "./data/euc-jp-decoded";
 import euckr from "./data/euc-kr-decoded";
 import gbk from "./data/gbk-decoded";
 import iso2022jp from "./data/iso-2022-jp-decoded";
-import shift_jis from "./data/shift_jis-decoded";
+import shiftJIS from "./data/shift_jis-decoded";
 import { readData } from "./util/readData";
 
 const utf8BOM = [ 0xEF, 0xBB, 0xBF ];
@@ -172,14 +172,11 @@ describe("TextDecoder", () => {
         }
     });
     it("correctly handles non-fatal errors at EOF", () => {
-        expect(() => new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array([ 0xff ])))
-            .toThrowError(TypeError);
+        expect(() => new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array([ 0xff ]))).toThrow(TypeError);
         expect(new TextDecoder("utf-8").decode(new Uint8Array([ 0xff ]))).toBe("\uFFFD");
-        expect(() => new TextDecoder("utf-16le", { fatal: true }).decode(new Uint8Array([ 0x00 ])))
-            .toThrowError(TypeError);
+        expect(() => new TextDecoder("utf-16le", { fatal: true }).decode(new Uint8Array([ 0x00 ]))).toThrow(TypeError);
         expect(new TextDecoder("utf-16le").decode(new Uint8Array([ 0x00 ]))).toBe("\uFFFD");
-        expect(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ])))
-            .toThrowError(TypeError);
+        expect(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ]))).toThrow(TypeError);
         expect(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ]))).toBe("\uFFFD");
     });
     describe("throws RangeError for unsupported encodings:", () => {
@@ -193,7 +190,7 @@ describe("TextDecoder", () => {
         ];
         for (const encoding of badEncodings) {
             it(encoding, () => {
-                expect(() => new TextDecoder(encoding)).toThrowError(RangeError);
+                expect(() => new TextDecoder(encoding)).toThrow(RangeError);
             });
         }
     });
@@ -280,7 +277,7 @@ describe("TextDecoder", () => {
         expect(new TextDecoder("gbk",).decode(encoded)).toBe(gbk);
     });
     it("can decode shift_jis", async () => {
-        expect(new TextDecoder("shift_jis").decode(await readData("shift_jis-encoded.txt"))).toBe(shift_jis);
+        expect(new TextDecoder("shift_jis").decode(await readData("shift_jis-encoded.txt"))).toBe(shiftJIS);
         expect(new TextDecoder("shift_jis").decode(new Uint8Array([ 0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1 ])))
             .toBe("\u306B\u307B\u3093"); // Nihon);
     });

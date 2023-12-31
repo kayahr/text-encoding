@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as iso_8859_3 from "../../../data/iso-8859-3.cp.json";
+import * as iso88593 from "../../../data/iso-8859-3.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -21,6 +21,6 @@ registerEncoding(
         "l3",
         "latin3"
     ],
-    SingleByteDecoder.forCodePoints(iso_8859_3),
-    SingleByteEncoder.forCodePoints(iso_8859_3)
+    SingleByteDecoder.forCodePoints(iso88593),
+    SingleByteEncoder.forCodePoints(iso88593)
 );

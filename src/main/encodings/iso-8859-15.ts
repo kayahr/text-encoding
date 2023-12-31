@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as iso_8859_15 from "../../../data/iso-8859-15.cp.json";
+import * as iso885915 from "../../../data/iso-8859-15.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -18,6 +18,6 @@ registerEncoding(
         "iso_8859-15",
         "l9"
     ],
-    SingleByteDecoder.forCodePoints(iso_8859_15),
-    SingleByteEncoder.forCodePoints(iso_8859_15)
+    SingleByteDecoder.forCodePoints(iso885915),
+    SingleByteEncoder.forCodePoints(iso885915)
 );

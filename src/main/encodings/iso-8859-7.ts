@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as iso_8859_7 from "../../../data/iso-8859-7.cp.json";
+import * as iso88597 from "../../../data/iso-8859-7.cp.json";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
 import { registerEncoding } from "../Encoding";
@@ -24,6 +24,6 @@ registerEncoding(
         "iso_8859-7:1987",
         "sun_eu_greek"
     ],
-    SingleByteDecoder.forCodePoints(iso_8859_7),
-    SingleByteEncoder.forCodePoints(iso_8859_7)
+    SingleByteDecoder.forCodePoints(iso88597),
+    SingleByteEncoder.forCodePoints(iso88597)
 );
