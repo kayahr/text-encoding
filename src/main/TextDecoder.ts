@@ -107,6 +107,10 @@ export class TextDecoder implements globalThis.TextDecoder {
         }
 
         // Create and return string from decoded code points
-        return String.fromCodePoint(...output);
+        let text = '';
+        for (const codePoint of output) {
+            text += String.fromCodePoint(codePoint);
+        }
+        return text;
     }
 }
