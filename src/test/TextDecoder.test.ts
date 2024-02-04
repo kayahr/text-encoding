@@ -328,4 +328,12 @@ describe("TextDecoder", () => {
     it("correctly maps 0xCA to U+05BA in windows-1255 encoding", () => {
         expect(new TextDecoder("windows-1255").decode(new Uint8Array([ 0xca ]))).toBe("\u05BA");
     });
+    it("correctly decodes a very large input", () => {
+        const data = new Uint16Array(1_000_000);
+        data.fill(0x5400);
+        const utf16 = new Uint8Array(data.buffer);
+        const decoded = new TextDecoder("utf-16be").decode(utf16);
+        expect(decoded.length).toBe(1_000_000);
+        expect(decoded).toContain("TTTT");
+    });
 });

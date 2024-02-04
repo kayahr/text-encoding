@@ -64,7 +64,7 @@ export class TextDecoder implements globalThis.TextDecoder {
 
         // Decode the input bytes
         const inputStream = new ByteBuffer(bytes);
-        const output = [];
+        let output = "";
         let result: number | number[] | null;
         while (!inputStream.isEndOfBuffer()) {
             result = this.decoder.decode(inputStream);
@@ -72,10 +72,10 @@ export class TextDecoder implements globalThis.TextDecoder {
                 break;
             }
             if (result != null) {
-                if (Array.isArray(result)) {
-                    output.push(...result);
+                if (typeof result === "number") {
+                    output += String.fromCodePoint(result);
                 } else {
-                    output.push(result);
+                    output += String.fromCodePoint(...result);
                 }
             }
         }
@@ -86,10 +86,10 @@ export class TextDecoder implements globalThis.TextDecoder {
                     break;
                 }
                 if (result != null) {
-                    if (Array.isArray(result)) {
-                        output.push(...result);
+                    if (typeof result === "number") {
+                        output += String.fromCodePoint(result);
                     } else {
-                        output.push(result);
+                        output += String.fromCodePoint(...result);
                     }
                 }
             } while(!inputStream.isEndOfBuffer());
@@ -99,14 +99,14 @@ export class TextDecoder implements globalThis.TextDecoder {
         // Remove BOM header from output if ignoreBOM flag is not set
         if ([ "utf-8", "utf-16le", "utf-16be" ].includes(this.encoding) && !this.ignoreBOM && !this.seenBOM) {
             if (output.length > 0) {
-                if (output[0] === 0xFEFF) {
-                    output.shift();
-                }
                 this.seenBOM = true;
+                if (output[0] === "\uFEFF") {
+                    return output.substring(1);
+                }
             }
         }
 
-        // Create and return string from decoded code points
-        return String.fromCodePoint(...output);
+        // Join the decoded code points into a full string and return it
+        return output;
     }
 }
