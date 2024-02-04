@@ -106,7 +106,6 @@ export class TextDecoder implements globalThis.TextDecoder {
             }
         }
 
-        // Join the decoded code points into a full string and return it
         return output;
     }
 }
