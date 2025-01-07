@@ -3,8 +3,8 @@
  * See LICENSE.md for licensing information.
  */
 
-import gb18030 from "../../../data/gb18030.cp.json" with { type: "json" };
-import gb18030ranges from "../../../data/gb18030.ranges.json" with { type: "json" };
+import gb18030 from "../../../data/gb18030.cp.js";
+import gb18030ranges from "../../../data/gb18030.ranges.js";
 import { AbstractEncoder } from "../AbstractEncoder.js";
 import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
 import { FINISHED } from "../constants.js";

@@ -6,6 +6,7 @@ export default [
         ignores: [
             "doc",
             "lib",
+            "data",
             "src/test/data",
             "**/*.legacy.ts"
         ]

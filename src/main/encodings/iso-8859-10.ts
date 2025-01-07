@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import iso885910 from "../../../data/iso-8859-10.cp.json" with { type: "json" };
+import iso885910 from "../../../data/iso-8859-10.cp.js";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
 import { registerEncoding } from "../Encoding.js";

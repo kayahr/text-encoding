@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import euckr from "../../../data/euc-kr.cp.json" with { type: "json" };
+import euckr from "../../../data/euc-kr.cp.js";
 import { AbstractEncoder } from "../AbstractEncoder.js";
 import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
 import { FINISHED } from "../constants.js";

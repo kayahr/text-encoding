@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import koi8r from "../../../data/koi8-r.cp.json" with { type: "json" };
+import koi8r from "../../../data/koi8-r.cp.js";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
 import { registerEncoding } from "../Encoding.js";

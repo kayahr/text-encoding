@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import big5 from "../../../data/big5.cp.json" with { type: "json" };
+import big5 from "../../../data/big5.cp.js";
 import { AbstractDecoder } from "../AbstractDecoder.js";
 import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
 import { FINISHED } from "../constants.js";

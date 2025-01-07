@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import windows1253 from "../../../data/windows-1253.cp.json" with { type: "json" };
+import windows1253 from "../../../data/windows-1253.cp.js";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
 import { registerEncoding } from "../Encoding.js";

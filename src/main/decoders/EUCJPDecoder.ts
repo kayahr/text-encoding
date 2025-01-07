@@ -3,8 +3,8 @@
  * See LICENSE.md for licensing information.
  */
 
-import jis0208 from "../../../data/jis0208.cp.json" with { type: "json" };
-import jis0212 from "../../../data/jis0212.cp.json" with { type: "json" };
+import jis0208 from "../../../data/jis0208.cp.js";
+import jis0212 from "../../../data/jis0212.cp.js";
 import { AbstractDecoder } from "../AbstractDecoder.js";
 import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
 import { FINISHED } from "../constants.js";

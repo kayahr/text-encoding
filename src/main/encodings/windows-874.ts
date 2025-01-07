@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import windows874 from "../../../data/windows-874.cp.json" with { type: "json" };
+import windows874 from "../../../data/windows-874.cp.js";
 import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
 import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
 import { registerEncoding } from "../Encoding.js";
