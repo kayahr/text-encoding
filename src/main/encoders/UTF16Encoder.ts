@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractEncoder } from "../AbstractEncoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { convertCodeUnitToBytes, inRange } from "../util";
+import { AbstractEncoder } from "../AbstractEncoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { convertCodeUnitToBytes, inRange } from "../util.js";
 
 /**
  * Base class for utf-16 encoders.

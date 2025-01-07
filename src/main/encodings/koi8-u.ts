@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as koi8u from "../../../data/koi8-u.cp.json";
-import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
-import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
-import { registerEncoding } from "../Encoding";
+import koi8u from "../../../data/koi8-u.cp.json" with { type: "json" };
+import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
+import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
+import { registerEncoding } from "../Encoding.js";
 
 registerEncoding(
     "koi8-u",

@@ -5,8 +5,11 @@
     ],
     "basePath": "src/main",
     "entryPointStrategy": "resolve",
-    "out": "doc/api",
+    "out": "lib/apidoc",
     "excludePrivate": true,
+    "excludeExternals": true,
+    "excludeInternal": true,
     "treatWarningsAsErrors": true,
+    "validation": true,
     "gitRevision": "main"
 }

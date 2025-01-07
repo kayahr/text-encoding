@@ -1,0 +1,23 @@
+{
+    "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
+    "version": "0.2",
+    "language": "en",
+    "files": [ "**/*" ],
+    "dictionaryDefinitions": [
+        {
+            "name": "project-words",
+            "path": "./.cspell/project-words.txt",
+            "addWords": true
+        }
+    ],
+    "dictionaries": [ "project-words" ],
+    "ignorePaths": [
+        "./.cspell",
+        "./.git",
+        "./lib",
+        "./node_modules",
+        "./package-lock.json",
+        "./src/test/data",
+        "sandbox"
+    ]
+}

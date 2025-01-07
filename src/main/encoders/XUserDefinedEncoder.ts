@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractEncoder } from "../AbstractEncoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { inRange, isASCII } from "../util";
+import { AbstractEncoder } from "../AbstractEncoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { inRange, isASCII } from "../util.js";
 
 /**
  * Encoder for x-user-defined encoding.

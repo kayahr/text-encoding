@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer";
-import { FINISHED } from "./constants";
-import { Encoder } from "./Encoder";
-import { Encoding, getEncoding } from "./Encoding";
+import { ByteBuffer } from "./ByteBuffer.js";
+import { FINISHED } from "./constants.js";
+import { Encoder } from "./Encoder.js";
+import { Encoding, getEncoding } from "./Encoding.js";
 
 /**
  * Converts string to code points.

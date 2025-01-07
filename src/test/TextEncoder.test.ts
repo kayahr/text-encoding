@@ -3,14 +3,16 @@
  * See LICENSE.md for licensing information.
  */
 
-import "../main/encodings";
+import "../main/encodings.js";
 
-import { TextEncoder } from "../main/TextEncoder";
-import eucjp from "./data/euc-jp-decoded";
-import euckr from "./data/euc-kr-decoded";
-import gbk from "./data/gbk-decoded";
-import shiftJIS from "./data/shift_jis-decoded";
-import { readData } from "./util/readData";
+import { describe, expect, it } from "vitest";
+
+import { TextEncoder } from "../main/TextEncoder.js";
+import eucjp from "./data/euc-jp-decoded.js";
+import euckr from "./data/euc-kr-decoded.js";
+import gbk from "./data/gbk-decoded.js";
+import shiftJIS from "./data/shift_jis-decoded.js";
+import { readData } from "./util/readData.js";
 
 const UTF8_ENCODING = [ "utf-8" ];
 const LEGACY_ENCODINGS = [

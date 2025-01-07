@@ -3,8 +3,8 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer";
-import { Encoder } from "./Encoder";
+import { ByteBuffer } from "./ByteBuffer.js";
+import { Encoder } from "./Encoder.js";
 
 /**
  * Base class for encoders.

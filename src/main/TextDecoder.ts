@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer";
-import { DEFAULT_ENCODING, FINISHED } from "./constants";
-import { Decoder } from "./Decoder";
-import { Encoding, getEncoding } from "./Encoding";
+import { ByteBuffer } from "./ByteBuffer.js";
+import { DEFAULT_ENCODING, FINISHED } from "./constants.js";
+import { Decoder } from "./Decoder.js";
+import { Encoding, getEncoding } from "./Encoding.js";
 
 /**
  * The TextDecoder represents a decoder for a specific text encoding, such as UTF-8, ISO-8859-2, KOI8-R, GBK, etc.
@@ -92,7 +92,7 @@ export class TextDecoder implements globalThis.TextDecoder {
                         output += String.fromCodePoint(...result);
                     }
                 }
-            } while(!inputStream.isEndOfBuffer());
+            } while (!inputStream.isEndOfBuffer());
             this.decoder = null;
         }
 

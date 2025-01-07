@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as xMacCyrillic from "../../../data/x-mac-cyrillic.cp.json";
-import { SingleByteDecoder } from "../decoders/SingleByteDecoder";
-import { SingleByteEncoder } from "../encoders/SingleByteEncoder";
-import { registerEncoding } from "../Encoding";
+import xMacCyrillic from "../../../data/x-mac-cyrillic.cp.json" with { type: "json" };
+import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
+import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
+import { registerEncoding } from "../Encoding.js";
 
 registerEncoding(
     "x-mac-cyrillic",

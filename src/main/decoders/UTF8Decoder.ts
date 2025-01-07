@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractDecoder } from "../AbstractDecoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { inRange } from "../util";
+import { AbstractDecoder } from "../AbstractDecoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { inRange } from "../util.js";
 
 /**
  * Decoder for utf-8 encoding.

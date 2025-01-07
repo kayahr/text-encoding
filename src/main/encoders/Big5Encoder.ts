@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as big5 from "../../../data/big5.cp.json";
-import { AbstractEncoder } from "../AbstractEncoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { indexOf, isASCII } from "../util";
+import big5 from "../../../data/big5.cp.json" with { type: "json" };
+import { AbstractEncoder } from "../AbstractEncoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { indexOf, isASCII } from "../util.js";
 
 /**
  * Returns the index for the given code point.

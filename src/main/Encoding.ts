@@ -3,8 +3,8 @@
  * See LICENSE.md for licensing information.
  */
 
-import { Decoder, DecoderConstructor } from "./Decoder";
-import { Encoder, EncoderConstructor } from "./Encoder";
+import { Decoder, DecoderConstructor } from "./Decoder.js";
+import { Encoder, EncoderConstructor } from "./Encoder.js";
 
 /** Map with registered encodings. Map key is any lower-cased encoding label. */
 const encodings = new Map<string, Encoding>();

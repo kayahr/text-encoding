@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ISO2022JPDecoder } from "../decoders/ISO2022JPDecoder";
-import { ISO2022JPEncoder } from "../encoders/ISO2022JPEncoder";
-import { registerEncoding } from "../Encoding";
+import { ISO2022JPDecoder } from "../decoders/ISO2022JPDecoder.js";
+import { ISO2022JPEncoder } from "../encoders/ISO2022JPEncoder.js";
+import { registerEncoding } from "../Encoding.js";
 
 registerEncoding(
     "iso-2022-jp",

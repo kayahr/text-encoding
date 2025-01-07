@@ -1,6 +1,4 @@
-coverage/
-doc/api/
-lib/
-node_modules/
-sandbox/
-*.tgz
+/lib
+/node_modules
+/*.tgz
+sandbox

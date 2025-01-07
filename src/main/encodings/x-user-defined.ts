@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { XUserDefinedDecoder } from "../decoders/XUserDefinedDecoder";
-import { XUserDefinedEncoder } from "../encoders/XUserDefinedEncoder";
-import { registerEncoding } from "../Encoding";
+import { XUserDefinedDecoder } from "../decoders/XUserDefinedDecoder.js";
+import { XUserDefinedEncoder } from "../encoders/XUserDefinedEncoder.js";
+import { registerEncoding } from "../Encoding.js";
 
 registerEncoding(
     "x-user-defined",

@@ -19,9 +19,7 @@
         },
         {
             "label": "Run unit tests",
-            "type": "npm",
-            "script": "check",
-            "problemMatcher": [],
+            "command": "${command:testing.coverageAll}",
             "group": {
                 "kind": "test",
                 "isDefault": true

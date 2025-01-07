@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as jis0208 from "../../../data/jis0208.cp.json";
-import { AbstractDecoder } from "../AbstractDecoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { inRange, isASCII } from "../util";
+import jis0208 from "../../../data/jis0208.cp.json" with { type: "json" };
+import { AbstractDecoder } from "../AbstractDecoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { inRange, isASCII } from "../util.js";
 
 /**
  * Decoder for shift_jis encoding.

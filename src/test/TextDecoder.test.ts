@@ -3,17 +3,19 @@
  * See LICENSE.md for licensing information.
  */
 
-import "../main/encodings";
+import "../main/encodings.js";
 
-import { TextDecoder } from "../main/TextDecoder";
-import { TextEncoder } from "../main/TextEncoder";
-import big5 from "./data/big5-decoded";
-import eucjp from "./data/euc-jp-decoded";
-import euckr from "./data/euc-kr-decoded";
-import gbk from "./data/gbk-decoded";
-import iso2022jp from "./data/iso-2022-jp-decoded";
-import shiftJIS from "./data/shift_jis-decoded";
-import { readData } from "./util/readData";
+import { describe, expect, it } from "vitest";
+
+import { TextDecoder } from "../main/TextDecoder.js";
+import { TextEncoder } from "../main/TextEncoder.js";
+import big5 from "./data/big5-decoded.js";
+import eucjp from "./data/euc-jp-decoded.js";
+import euckr from "./data/euc-kr-decoded.js";
+import gbk from "./data/gbk-decoded.js";
+import iso2022jp from "./data/iso-2022-jp-decoded.js";
+import shiftJIS from "./data/shift_jis-decoded.js";
+import { readData } from "./util/readData.js";
 
 const utf8BOM = [ 0xEF, 0xBB, 0xBF ];
 const utf8 = [ 0x7A, 0xC2, 0xA2, 0xE6, 0xB0, 0xB4, 0xF0, 0x9D, 0x84, 0x9E, 0xF4, 0x8F, 0xBF, 0xBD ];
@@ -204,7 +206,7 @@ describe("TextDecoder", () => {
         const chars = "ABabcdefghCDEFGH";
         const buffer = new Uint8Array(bytes).buffer;
         const decoder = new TextDecoder();
-        const types = [
+        const types: Array<{ new (buffer: ArrayBuffer, byteOffset?: number, length?: number): BufferSource } & { BYTES_PER_ELEMENT: number } > = [
             Uint8Array,
             Int8Array,
             Uint8ClampedArray,
@@ -227,7 +229,7 @@ describe("TextDecoder", () => {
     });
     it("can decode iso-2022-jp", async () => {
         const encoded = await readData("iso-2022-jp-encoded.txt");
-        expect(new TextDecoder("iso-2022-jp",).decode(encoded)).toBe(iso2022jp);
+        expect(new TextDecoder("iso-2022-jp").decode(encoded)).toBe(iso2022jp);
     });
     it("can decode utf encodings with missing BOMs", () => {
         expect(new TextDecoder("utf-8").decode(new Uint8Array(utf8))).toBe(utfSample);
@@ -274,7 +276,7 @@ describe("TextDecoder", () => {
     });
     it("can decode gbk", async () => {
         const encoded = await readData("gbk-encoded.txt");
-        expect(new TextDecoder("gbk",).decode(encoded)).toBe(gbk);
+        expect(new TextDecoder("gbk").decode(encoded)).toBe(gbk);
     });
     it("can decode shift_jis", async () => {
         expect(new TextDecoder("shift_jis").decode(await readData("shift_jis-encoded.txt"))).toBe(shiftJIS);

@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer";
+import { ByteBuffer } from "./ByteBuffer.js";
 
 /** Decoder constructor type. */
 export type DecoderConstructor = new (fatal?: boolean) => Decoder;

@@ -3,6 +3,6 @@
  * See LICENSE.md for licensing information.
  */
 
-import "./encodings";
-export * from "./TextDecoder";
-export * from "./TextEncoder";
+import "./encodings.js";
+export * from "./TextDecoder.js";
+export * from "./TextEncoder.js";

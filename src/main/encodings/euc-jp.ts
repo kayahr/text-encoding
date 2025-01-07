@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { EUCJPDecoder } from "../decoders/EUCJPDecoder";
-import { EUCJPEncoder } from "../encoders/EUCJPEncoder";
-import { registerEncoding } from "../Encoding";
+import { EUCJPDecoder } from "../decoders/EUCJPDecoder.js";
+import { EUCJPEncoder } from "../encoders/EUCJPEncoder.js";
+import { registerEncoding } from "../Encoding.js";
 
 registerEncoding(
     "euc-jp",

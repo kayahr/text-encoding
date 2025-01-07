@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as big5 from "../../../data/big5.cp.json";
-import { AbstractDecoder } from "../AbstractDecoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { inRange, isASCII } from "../util";
+import big5 from "../../../data/big5.cp.json" with { type: "json" };
+import { AbstractDecoder } from "../AbstractDecoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { inRange, isASCII } from "../util.js";
 
 /**
  * Decoder for big5 encoding.
@@ -38,6 +38,7 @@ export class Big5Decoder extends AbstractDecoder {
                 case 1135: return [ 0x00CA, 0x030C ];
                 case 1164: return [ 0x00EA, 0x0304 ];
                 case 1166: return [ 0x00EA, 0x030C ];
+                case null:
                 default:
             }
             const codePoint = (index == null) ? null : big5[index] ?? null;

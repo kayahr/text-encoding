@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { GBDecoder } from "../decoders/GBDecoder";
-import { GB18030Encoder } from "../encoders/GBEncoder";
-import { registerEncoding } from "../Encoding";
+import { GBDecoder } from "../decoders/GBDecoder.js";
+import { GB18030Encoder } from "../encoders/GBEncoder.js";
+import { registerEncoding } from "../Encoding.js";
 
 registerEncoding(
     "gb18030",

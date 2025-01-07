@@ -3,12 +3,12 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as gb18030 from "../../../data/gb18030.cp.json";
-import * as gb18030ranges from "../../../data/gb18030.ranges.json";
-import { AbstractDecoder } from "../AbstractDecoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { inRange, isASCII } from "../util";
+import gb18030 from "../../../data/gb18030.cp.json" with { type: "json" };
+import gb18030ranges from "../../../data/gb18030.ranges.json" with { type: "json" };
+import { AbstractDecoder } from "../AbstractDecoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { inRange, isASCII } from "../util.js";
 
 /**
  * Returns the code point for the given gb18030 index.

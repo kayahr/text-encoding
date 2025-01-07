@@ -3,11 +3,8 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as fs from "fs";
-import * as path from "path";
-import { promisify } from "util";
-
-const readFile = promisify(fs.readFile);
+import { readFile } from "@kayahr/vitest-matchers";
+import { toByteArray } from "base64-js";
 
 /**
  * Reads binary data from the given file.
@@ -16,5 +13,5 @@ const readFile = promisify(fs.readFile);
  * @return The read file.
  */
 export async function readData(fileName: string): Promise<Uint8Array> {
-    return new Uint8Array(await readFile(path.join(__dirname, "..", "..", "..", "src", "test", "data", fileName)));
+    return toByteArray(await readFile(`src/test/data/${fileName}`, "base64"));
 }

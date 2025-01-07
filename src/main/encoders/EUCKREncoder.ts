@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import * as euckr from "../../../data/euc-kr.cp.json";
-import { AbstractEncoder } from "../AbstractEncoder";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer";
-import { FINISHED } from "../constants";
-import { indexOf, isASCII } from "../util";
+import euckr from "../../../data/euc-kr.cp.json" with { type: "json" };
+import { AbstractEncoder } from "../AbstractEncoder.js";
+import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
+import { FINISHED } from "../constants.js";
+import { indexOf, isASCII } from "../util.js";
 
 /**
  * Encoder for euc-kr encoding.
