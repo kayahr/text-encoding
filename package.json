@@ -7,6 +7,10 @@
     "keywords": [
         "typescript",
         "text",
+        "text-encoder",
+        "text-decoder",
+        "encodings",
+        "text-encodings",
         "encoding",
         "encode",
         "decoding",
