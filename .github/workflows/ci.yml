@@ -5,37 +5,23 @@ permissions:
   pages: write
   id-token: write
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
-      - name: Build
+      - name: Build project
         run: npm ci
-      - name: Test
+      - name: Run tests
         run: npm test
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-      - name: Build
-        run: npm ci
-      - name: Build API Doc
+      - name: Create API Doc
         run: npm run apidoc
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy API Doc
+        if: github.ref == 'refs/heads/main'
+        uses: kayahr/deploy-github-pages-action@d17ae8bb6c807ba4612792ceefa558be2e061e4c
         with:
-          path: 'lib/apidoc'
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+          path: lib/apidoc
