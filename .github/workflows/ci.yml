@@ -1,25 +1,41 @@
 name: ci
 on: [push]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ 22.x ]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22.x
       - name: Build
         run: npm ci
       - name: Test
         run: npm test
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Build
+        run: npm ci
       - name: Build API Doc
         run: npm run apidoc
-      - name: Deploy API Doc
-        if: ${{ github.ref == 'refs/heads/main' && matrix.node-version == '22.x' }}
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          folder: lib/apidoc
+          path: 'lib/apidoc'
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
