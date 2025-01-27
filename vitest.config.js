@@ -17,16 +17,18 @@ export default defineConfig({
         },
         browser: {
             provider: "playwright",
-            name: "chromium",
             headless: true,
             screenshotFailures: false,
-            providerOptions: {
-                launch: {
-                    args: [
-                        "--js-flags=--expose-gc"
-                    ]
+            instances: [
+                {
+                    browser: "chromium",
+                    launch: {
+                        args: [
+                            "--js-flags=--expose-gc"
+                        ]
+                    }
                 }
-            }
+            ]
         },
         coverage: {
             enabled: true,
