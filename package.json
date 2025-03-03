@@ -53,7 +53,7 @@
     "devDependencies": {
         "@kayahr/eslint-config": "3.3.0",
         "@kayahr/vitest-matchers": "1.1.0",
-        "@types/node": "22.13.1",
+        "@types/node": "22.13.8",
         "@vitest/browser": "3.0.5",
         "@vitest/coverage-v8": "3.0.5",
         "base64-js": "1.5.1",
