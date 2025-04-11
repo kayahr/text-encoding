@@ -206,7 +206,7 @@ describe("TextDecoder", () => {
         const chars = "ABabcdefghCDEFGH";
         const buffer = new Uint8Array(bytes).buffer;
         const decoder = new TextDecoder();
-        const types: Array<{ new (buffer: ArrayBuffer, byteOffset?: number, length?: number): BufferSource } & { BYTES_PER_ELEMENT: number } > = [
+        const types: Array<{ new (buffer: ArrayBuffer, byteOffset?: number, length?: number): BufferSource } & { BYTES_PER_ELEMENT: number }> = [
             Uint8Array,
             Int8Array,
             Uint8ClampedArray,

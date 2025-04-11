@@ -74,9 +74,7 @@ export class TextEncoder implements globalThis.TextEncoder {
      */
     public encode(input = ""): Uint8Array {
         // Initialize encoder if not already done
-        if (this.encoder == null) {
-            this.encoder = this.enc.createEncoder();
-        }
+        this.encoder ??= this.enc.createEncoder();
 
         // Encode the input string
         const inputStream = new ByteBuffer(stringToCodePoints(input));
@@ -101,9 +99,7 @@ export class TextEncoder implements globalThis.TextEncoder {
     /** @inheritDoc */
     public encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult {
         // Initialize encoder if not already done
-        if (this.encoder == null) {
-            this.encoder = this.enc.createEncoder();
-        }
+        this.encoder ??= this.enc.createEncoder();
 
         // Encode the input string
         const inputStream = new ByteBuffer(stringToCodePoints(source));
