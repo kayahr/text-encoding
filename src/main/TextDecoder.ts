@@ -46,7 +46,7 @@ export class TextDecoder implements globalThis.TextDecoder {
      * @param options - The decoding options.
      * @return The decoded string.
      */
-    public decode(input?: BufferSource, { stream = false }: TextDecodeOptions = {}): string {
+    public decode(input?: BufferSource | ArrayBufferLike | ArrayBufferView, { stream = false }: TextDecodeOptions = {}): string {
         let bytes;
         if (input instanceof ArrayBuffer) {
             bytes = new Uint8Array(input);

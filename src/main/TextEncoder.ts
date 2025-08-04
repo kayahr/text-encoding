@@ -72,7 +72,7 @@ export class TextEncoder implements globalThis.TextEncoder {
      * @param input - The string to encode.
      * @return The encoded bytes.
      */
-    public encode(input = ""): Uint8Array {
+    public encode(input = ""): Uint8Array<ArrayBuffer> {
         // Initialize encoder if not already done
         this.encoder ??= this.enc.createEncoder();
 
