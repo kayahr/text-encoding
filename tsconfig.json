@@ -7,7 +7,7 @@
             "ES2022",
             "DOM"
         ],
-        "module": "NodeNext",
+        "module": "node20",
         "newLine": "lf",
         "noEmitOnError": false,
         "noFallthroughCasesInSwitch": true,
@@ -24,6 +24,6 @@
         "resolveJsonModule": true,
         "sourceMap": true,
         "strict": true,
-        "target": "ES2022"
+        "target": "es2022"
     }
 }
