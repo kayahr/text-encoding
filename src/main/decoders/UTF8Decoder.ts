@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { inRange } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange } from "../util.ts";
 
 /**
  * Decoder for utf-8 encoding.
@@ -18,7 +18,7 @@ export class UTF8Decoder extends AbstractDecoder {
     private lowerBoundary = 0x80;
     private upperBoundary = 0xBF;
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER && this.bytesNeeded !== 0) {

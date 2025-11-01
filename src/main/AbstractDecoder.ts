@@ -3,32 +3,37 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer.js";
-import { Decoder } from "./Decoder.js";
+import type { ByteBuffer } from "./ByteBuffer.ts";
+import type { Decoder } from "./Decoder.ts";
 
 /**
  * Base class for decoders.
  */
 export abstract class AbstractDecoder implements Decoder {
+    /** True to throw an exception when a character can't be decoded. False to decode to a replacement character instead. */
+    protected readonly fatal: boolean;
+
     /**
      * @param fatal - True to throw an exception when a character can't be decoded. False to decode to a
      *                replacement character instead.
      */
-    public constructor(protected readonly fatal = false) {}
+    public constructor(fatal = false) {
+        this.fatal = fatal;
+    }
 
     /**
      * Fails the decoding by throwing an exception (if fatal flag is true) or returning a replacement character.
      *
-     * @return Replacement character to use for the character which could not be decoded.
+     * @returns Replacement character to use for the character which could not be decoded.
      * @throws TypeError - When fatal flag is set to true.
      */
     protected fail(): number {
         if (this.fatal) {
-            throw TypeError("Decoder error");
+            throw new TypeError("Decoder error");
         }
         return 0xFFFD;
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public abstract decode(buffer: ByteBuffer): number | number[] | null;
 }

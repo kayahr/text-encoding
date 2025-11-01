@@ -4,16 +4,16 @@
  */
 
 import jis0208 from "../../../data/jis0208.cp.js";
-import { AbstractEncoder } from "../AbstractEncoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { indexOf, inRange, isASCII } from "../util.js";
+import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange, indexOf, isASCII } from "../util.ts";
 
 /**
  * Encoder for euc-jp encoding.
  */
 export class EUCJPEncoder extends AbstractEncoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         let codePoint = buffer.read();
         if (codePoint === END_OF_BUFFER) {

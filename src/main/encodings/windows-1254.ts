@@ -4,9 +4,9 @@
  */
 
 import windows1254 from "../../../data/windows-1254.cp.js";
-import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
-import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { SingleByteDecoder } from "../decoders/SingleByteDecoder.ts";
+import { SingleByteEncoder } from "../encoders/SingleByteEncoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "windows-1254",

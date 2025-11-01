@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractEncoder } from "../AbstractEncoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { EncoderConstructor } from "../Encoder.js";
-import { indexOf, isASCII } from "../util.js";
+import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import type { EncoderConstructor } from "../Encoder.ts";
+import { indexOf, isASCII } from "../util.ts";
 
 /**
  * Encoder for single byte encodings.
@@ -29,7 +29,7 @@ export class SingleByteEncoder extends AbstractEncoder {
      * Creates and returns a single byte encoder class for the given code points.
      *
      * @param codePoints - The code points of the encoding to encode.
-     * @return The created single byte encoder class.
+     * @returns The created single byte encoder class.
      */
     public static forCodePoints(codePoints: Array<number | null>): EncoderConstructor {
         return class extends SingleByteEncoder {
@@ -39,7 +39,7 @@ export class SingleByteEncoder extends AbstractEncoder {
         };
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         const codePoint = buffer.read();
         if (codePoint === END_OF_BUFFER) {

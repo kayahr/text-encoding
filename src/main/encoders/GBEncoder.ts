@@ -5,16 +5,16 @@
 
 import gb18030 from "../../../data/gb18030.cp.js";
 import gb18030ranges from "../../../data/gb18030.ranges.js";
-import { AbstractEncoder } from "../AbstractEncoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { indexOf, isASCII } from "../util.js";
+import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { indexOf, isASCII } from "../util.ts";
 
 /**
  * Returns the index for the given code point.
  *
  * @param codePoint - The code point to search for.
- * @return The found index or null if not found.
+ * @returns The found index or null if not found.
  */
 export function getIndex(codePoint: number): number {
     if (codePoint === 0xE7C7) {
@@ -47,7 +47,7 @@ export abstract class GBEncoder extends AbstractEncoder {
         this.gbkFlag = gbkFlag;
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         const codePoint = buffer.read();
         if (codePoint === END_OF_BUFFER) {
@@ -74,9 +74,9 @@ export abstract class GBEncoder extends AbstractEncoder {
         }
         index = getIndex(codePoint);
         const byte1 = Math.floor(index / 10 / 126 / 10);
-        index = index - byte1 * 10 * 126 * 10;
+        index -= byte1 * 10 * 126 * 10;
         const byte2 = Math.floor(index / 10 / 126);
-        index = index - byte2 * 10 * 126;
+        index -= byte2 * 10 * 126;
         const byte3 = Math.floor(index / 10);
         const byte4 = index - byte3 * 10;
         return [ byte1 + 0x81, byte2 + 0x30, byte3 + 0x81, byte4 + 0x30 ];
@@ -87,7 +87,7 @@ export abstract class GBEncoder extends AbstractEncoder {
  * Encoder for gb18030 encoding.
  */
 export class GB18030Encoder extends GBEncoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public constructor() {
         super(false);
     }
@@ -97,7 +97,7 @@ export class GB18030Encoder extends GBEncoder {
  * Encoder for gbk encoding.
  */
 export class GBKEncoder extends GBEncoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public constructor() {
         super(true);
     }

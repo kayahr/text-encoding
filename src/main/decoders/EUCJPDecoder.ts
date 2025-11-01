@@ -5,10 +5,10 @@
 
 import jis0208 from "../../../data/jis0208.cp.js";
 import jis0212 from "../../../data/jis0212.cp.js";
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { inRange, isASCII } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange, isASCII } from "../util.ts";
 
 /**
  * Decoder for euc-jp encoding.
@@ -17,7 +17,7 @@ export class EUCJPDecoder extends AbstractDecoder {
     private jis0212Flag = false;
     private lead = 0x00;
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER && this.lead !== 0x00) {

@@ -5,6 +5,20 @@
         "node_modules": true
     },
     "task.allowAutomaticTasks": "on",
-    "javascript.preferences.importModuleSpecifierEnding": "js",
-    "typescript.preferences.importModuleSpecifierEnding": "js"
+    "nodejs-testing.extensions": [
+        {
+            "extensions": [ "ts" ],
+            "filePatterns": [
+                "src/test/**/*.test.ts"
+            ],
+            "parameters": [
+                "--experimental-test-coverage"
+            ]
+        }
+    ],
+    "oxc.typeAware": true,
+    "coverage-gutters.coverageFileNames": [
+        "lib/test/lcov.info"
+    ],
+    "oxc.enable": true
 }

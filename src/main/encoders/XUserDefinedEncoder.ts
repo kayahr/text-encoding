@@ -3,16 +3,16 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractEncoder } from "../AbstractEncoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { inRange, isASCII } from "../util.js";
+import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange, isASCII } from "../util.ts";
 
 /**
  * Encoder for x-user-defined encoding.
  */
 export class XUserDefinedEncoder extends AbstractEncoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         const codePoint = buffer.read();
         if (codePoint === END_OF_BUFFER) {

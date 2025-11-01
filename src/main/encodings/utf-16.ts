@@ -3,5 +3,5 @@
  * See LICENSE.md for licensing information.
  */
 
-import "./utf-16be.js";
-import "./utf-16le.js";
+import "./utf-16be.ts";
+import "./utf-16le.ts";

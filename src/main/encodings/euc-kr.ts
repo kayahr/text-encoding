@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { EUCKRDecoder } from "../decoders/EUCKRDecoder.js";
-import { EUCKREncoder } from "../encoders/EUCKREncoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { EUCKRDecoder } from "../decoders/EUCKRDecoder.ts";
+import { EUCKREncoder } from "../encoders/EUCKREncoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "euc-kr",

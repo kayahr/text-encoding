@@ -3,16 +3,16 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer.js";
-import { FINISHED } from "./constants.js";
-import { Encoder } from "./Encoder.js";
-import { Encoding, getEncoding } from "./Encoding.js";
+import { ByteBuffer } from "./ByteBuffer.ts";
+import { FINISHED } from "./constants.ts";
+import type { Encoder } from "./Encoder.ts";
+import { type Encoding, getEncoding } from "./Encoding.ts";
 
 /**
  * Converts string to code points.
  *
  * @param string - Input string of UTF-16 code units.
- * @return Code points.
+ * @returns Code points.
  */
 function stringToCodePoints(string: string): number[] {
     const n = string.length;
@@ -61,7 +61,7 @@ export class TextEncoder implements globalThis.TextEncoder {
         this.enc = getEncoding(label);
     }
 
-    /** @return The name of the encoding. */
+    /** @returns The name of the encoding. */
     public get encoding(): string {
         return this.enc.getName();
     }
@@ -70,7 +70,7 @@ export class TextEncoder implements globalThis.TextEncoder {
      * Encodes the given string and returns the encoded bytes.
      *
      * @param input - The string to encode.
-     * @return The encoded bytes.
+     * @returns The encoded bytes.
      */
     public encode(input = ""): Uint8Array<ArrayBuffer> {
         // Initialize encoder if not already done
@@ -96,7 +96,7 @@ export class TextEncoder implements globalThis.TextEncoder {
         return new Uint8Array(output);
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult {
         // Initialize encoder if not already done
         this.encoder ??= this.enc.createEncoder();
@@ -134,9 +134,9 @@ export class TextEncoder implements globalThis.TextEncoder {
  * specific encoding.
  *
  * @param label - The encoding label. Defaults to "utf-8".
- * @return The created text encoder.
+ * @returns The created text encoder.
  */
-export function createTextEncoder(label: string = "utf-8"): globalThis.TextEncoder | TextEncoder {
+export function createTextEncoder(label = "utf-8"): globalThis.TextEncoder | TextEncoder {
     if (label === "utf-8" && typeof globalThis.TextEncoder === "function") {
         return new globalThis.TextEncoder();
     } else {

@@ -4,24 +4,25 @@
  */
 
 import jis0208 from "../../../data/jis0208.cp.js";
-import { AbstractEncoder } from "../AbstractEncoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { indexOf, isASCII } from "../util.js";
+import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { indexOf, isASCII } from "../util.ts";
 
-enum State {
-    ASCII = 0,
-    Roman = 1,
-    jis0208 = 2
-}
+type State = typeof State[keyof typeof State];
+const State = {
+    ASCII: 0,
+    Roman: 1,
+    jis0208: 2
+} as const;
 
 /**
  * Encoder for iso-2022-jp encoding.
  */
 export class ISO2022JPEncoder extends AbstractEncoder {
-    private state = State.ASCII;
+    private state: State = State.ASCII;
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         let codePoint = buffer.read();
         if (codePoint === END_OF_BUFFER && this.state !== State.ASCII) {

@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { DecoderConstructor } from "../Decoder.js";
-import { isASCII } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import type { DecoderConstructor } from "../Decoder.ts";
+import { isASCII } from "../util.ts";
 
 /**
  * Decoder for single byte encodings.
@@ -31,7 +31,7 @@ export class SingleByteDecoder extends AbstractDecoder {
      * Creates and returns a single byte decoder class for the given code points.
      *
      * @param codePoints - The code points of the encoding to decode.
-     * @return The created single byte decoder class.
+     * @returns The created single byte decoder class.
      */
     public static forCodePoints(codePoints: Array<number | null>): DecoderConstructor {
         return class extends SingleByteDecoder {
@@ -41,7 +41,7 @@ export class SingleByteDecoder extends AbstractDecoder {
         };
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER) {

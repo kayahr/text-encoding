@@ -4,9 +4,9 @@
  */
 
 import iso88594 from "../../../data/iso-8859-4.cp.js";
-import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
-import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { SingleByteDecoder } from "../decoders/SingleByteDecoder.ts";
+import { SingleByteEncoder } from "../encoders/SingleByteEncoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "iso-8859-4",

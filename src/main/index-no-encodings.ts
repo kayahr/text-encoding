@@ -3,5 +3,5 @@
  * See LICENSE.md for licensing information.
  */
 
-export * from "./TextDecoder.js";
-export * from "./TextEncoder.js";
+export * from "./TextDecoder.ts";
+export * from "./TextEncoder.ts";

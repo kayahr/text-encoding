@@ -4,9 +4,9 @@
  */
 
 import xMacCyrillic from "../../../data/x-mac-cyrillic.cp.json" with { type: "json" };
-import { SingleByteDecoder } from "../decoders/SingleByteDecoder.js";
-import { SingleByteEncoder } from "../encoders/SingleByteEncoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { SingleByteDecoder } from "../decoders/SingleByteDecoder.ts";
+import { SingleByteEncoder } from "../encoders/SingleByteEncoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "x-mac-cyrillic",

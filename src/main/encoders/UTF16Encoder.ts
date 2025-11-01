@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractEncoder } from "../AbstractEncoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { convertCodeUnitToBytes, inRange } from "../util.js";
+import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { convertCodeUnitToBytes, inRange } from "../util.ts";
 
 /**
  * Base class for utf-16 encoders.
@@ -22,7 +22,7 @@ export abstract class UTF16Encoder extends AbstractEncoder {
         this.bigEndian = bigEndian;
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         const codePoint = buffer.read();
         if (codePoint === END_OF_BUFFER) {
@@ -41,7 +41,7 @@ export abstract class UTF16Encoder extends AbstractEncoder {
  * Encoder for utf-16le encoding.
  */
 export class UTF16LEEncoder extends UTF16Encoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public constructor() {
         super(false);
     }
@@ -51,7 +51,7 @@ export class UTF16LEEncoder extends UTF16Encoder {
  * Encoder for utf-16be encoding.
  */
 export class UTF16BEEncoder extends UTF16Encoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public constructor() {
         super(true);
     }

@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { UTF16LEDecoder } from "../decoders/UTF16Decoder.js";
-import { UTF16LEEncoder } from "../encoders/UTF16Encoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { UTF16LEDecoder } from "../decoders/UTF16Decoder.ts";
+import { UTF16LEEncoder } from "../encoders/UTF16Encoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "utf-16le",

@@ -5,16 +5,16 @@
 
 import gb18030 from "../../../data/gb18030.cp.js";
 import gb18030ranges from "../../../data/gb18030.ranges.js";
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { inRange, isASCII } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange, isASCII } from "../util.ts";
 
 /**
  * Returns the code point for the given gb18030 index.
  *
  * @param index - The index in the gb18030 code point table.
- * @return The code point corresponding to the given index.
+ * @returns The code point corresponding to the given index.
  */
 function getCodePoint(index: number): number | null {
     if ((index > 39419 && index < 189000) || (index > 1237575)) {
@@ -44,7 +44,7 @@ export class GBDecoder extends AbstractDecoder {
     private second = 0x00;
     private third = 0x00;
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER && this.first === 0x00 && this.second === 0x00 && this.third === 0x00) {

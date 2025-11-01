@@ -10,6 +10,10 @@
     "excludeExternals": true,
     "excludeInternal": true,
     "treatWarningsAsErrors": true,
+    "plugin": [
+        "@kayahr/typedoc/github-theme",
+        "@kayahr/typedoc/mdn-links"
+    ],
     "validation": true,
     "gitRevision": "main"
 }

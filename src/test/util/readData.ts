@@ -3,15 +3,14 @@
  * See LICENSE.md for licensing information.
  */
 
-import { readFile } from "@kayahr/vitest-matchers";
-import { toByteArray } from "base64-js";
+import { readFile } from "node:fs/promises";
 
 /**
  * Reads binary data from the given file.
  *
  * @param fileName - Name of the file to read. Relative to src/test/data directory.
- * @return The read file.
+ * @returns The read file.
  */
 export async function readData(fileName: string): Promise<Uint8Array> {
-    return toByteArray(await readFile(`src/test/data/${fileName}`, "base64"));
+    return new Uint8Array((await readFile(`src/test/data/${fileName}`)).buffer);
 }

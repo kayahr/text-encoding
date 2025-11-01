@@ -3,19 +3,19 @@
  * See LICENSE.md for licensing information.
  */
 
-import "../main/encodings.js";
+import "../main/encodings.ts";
 
-import { describe, expect, it } from "vitest";
-
-import { TextDecoder } from "../main/TextDecoder.js";
-import { TextEncoder } from "../main/TextEncoder.js";
-import big5 from "./data/big5-decoded.js";
-import eucjp from "./data/euc-jp-decoded.js";
-import euckr from "./data/euc-kr-decoded.js";
-import gbk from "./data/gbk-decoded.js";
-import iso2022jp from "./data/iso-2022-jp-decoded.js";
-import shiftJIS from "./data/shift_jis-decoded.js";
-import { readData } from "./util/readData.js";
+import { describe, it } from "node:test";
+import { assertContain, assertNotSame, assertSame, assertThrow, assertThrowWithMessage } from "@kayahr/assert";
+import { TextDecoder } from "../main/TextDecoder.ts";
+import { TextEncoder } from "../main/TextEncoder.ts";
+import big5 from "./data/big5-decoded.ts";
+import eucjp from "./data/euc-jp-decoded.ts";
+import euckr from "./data/euc-kr-decoded.ts";
+import gbk from "./data/gbk-decoded.ts";
+import iso2022jp from "./data/iso-2022-jp-decoded.ts";
+import shiftJIS from "./data/shift_jis-decoded.ts";
+import { readData } from "./util/readData.ts";
 
 const utf8BOM = [ 0xEF, 0xBB, 0xBF ];
 const utf8 = [ 0x7A, 0xC2, 0xA2, 0xE6, 0xB0, 0xB4, 0xF0, 0x9D, 0x84, 0x9E, 0xF4, 0x8F, 0xBF, 0xBD ];
@@ -41,20 +41,20 @@ const ASCII_SUPERSETS = UTF8_ENCODING.concat(LEGACY_ENCODINGS).filter(e => e !==
 
 describe("TextDecoder", () => {
     it("defaults to utf-8 encoding", () => {
-        expect(new TextDecoder().encoding).toBe("utf-8");
+        assertSame(new TextDecoder().encoding, "utf-8");
     });
     it("accepts encoding argument", () => {
-        expect(new TextDecoder("utf-16le").encoding).toBe("utf-16le");
+        assertSame(new TextDecoder("utf-16le").encoding, "utf-16le");
     });
     it("accepts 'fatal' option", () => {
-        expect(new TextDecoder("utf-8").fatal).toBe(false);
-        expect(new TextDecoder("utf-8", { fatal: true }).fatal).toBe(true);
-        expect(new TextDecoder("utf-8", { fatal: false }).fatal).toBe(false);
+        assertSame(new TextDecoder("utf-8").fatal, false);
+        assertSame(new TextDecoder("utf-8", { fatal: true }).fatal, true);
+        assertSame(new TextDecoder("utf-8", { fatal: false }).fatal, false);
     });
     it("accepts 'ignoreBOM' option", () => {
-        expect(new TextDecoder("utf-8").ignoreBOM).toBe(false);
-        expect(new TextDecoder("utf-8", { ignoreBOM: true }).ignoreBOM).toBe(true);
-        expect(new TextDecoder("utf-8", { ignoreBOM: false }).ignoreBOM).toBe(false);
+        assertSame(new TextDecoder("utf-8").ignoreBOM, false);
+        assertSame(new TextDecoder("utf-8", { ignoreBOM: true }).ignoreBOM, true);
+        assertSame(new TextDecoder("utf-8", { ignoreBOM: false }).ignoreBOM, false);
     });
     it("handles bad strings", () => {
         const badStrings = [
@@ -67,7 +67,7 @@ describe("TextDecoder", () => {
         for (const badString of badStrings) {
             const encoded = new TextEncoder().encode(badString.input);
             const decoded = new TextDecoder().decode(encoded);
-            expect(decoded).toBe(badString.expected);
+            assertSame(decoded, badString.expected);
         }
     });
     it("throws exception on bad input when fatal flag is true", () => {
@@ -89,7 +89,7 @@ describe("TextDecoder", () => {
         ];
         for (const badInput of badInputs) {
             const encoded = new Uint8Array(badInput.input);
-            expect(() => new TextDecoder(badInput.encoding, { fatal: true }).decode(encoded)).toThrow();
+            assertThrow(() => new TextDecoder(badInput.encoding, { fatal: true }).decode(encoded));
         }
     });
     it("accept encoding names case-insensitive", () => {
@@ -103,8 +103,8 @@ describe("TextDecoder", () => {
             { label: "iso-8859-1", encoding: "windows-1252" }
         ];
         for (const encoding of encodings) {
-            expect(new TextDecoder(encoding.label.toLowerCase()).encoding).toBe(encoding.encoding);
-            expect(new TextDecoder(encoding.label.toUpperCase()).encoding).toBe(encoding.encoding);
+            assertSame(new TextDecoder(encoding.label.toLowerCase()).encoding, encoding.encoding);
+            assertSame(new TextDecoder(encoding.label.toUpperCase()).encoding, encoding.encoding);
         }
     });
     describe("can stream-decode", () => {
@@ -149,7 +149,7 @@ describe("TextDecoder", () => {
                             out += decoder.decode(new Uint8Array(sub), { stream: true });
                         }
                         out += decoder.decode();
-                        expect(out).toBe(string);
+                        assertSame(out, string);
                     });
                 }
             });
@@ -169,37 +169,40 @@ describe("TextDecoder", () => {
                     bytes.push(i);
                 }
                 const asciiEncoded = new TextEncoder().encode(string);
-                expect(new TextDecoder(encoding).decode(asciiEncoded)).toBe(string);
+                assertSame(new TextDecoder(encoding).decode(asciiEncoded), string);
             });
         }
     });
     it("correctly handles non-fatal errors at EOF", () => {
-        expect(() => new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array([ 0xff ]))).toThrow(TypeError);
-        expect(new TextDecoder("utf-8").decode(new Uint8Array([ 0xff ]))).toBe("\uFFFD");
-        expect(() => new TextDecoder("utf-16le", { fatal: true }).decode(new Uint8Array([ 0x00 ]))).toThrow(TypeError);
-        expect(new TextDecoder("utf-16le").decode(new Uint8Array([ 0x00 ]))).toBe("\uFFFD");
-        expect(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ]))).toThrow(TypeError);
-        expect(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ]))).toBe("\uFFFD");
+        assertThrowWithMessage(() => new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array([ 0xff ])), TypeError, "Decoder error");
+        assertSame(new TextDecoder("utf-8").decode(new Uint8Array([ 0xff ])), "\uFFFD");
+        assertThrowWithMessage(() => new TextDecoder("utf-16le", { fatal: true }).decode(new Uint8Array([ 0x00 ])), TypeError, "Decoder error");
+        assertSame(new TextDecoder("utf-16le").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
+        assertThrowWithMessage(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ])), TypeError, "Decoder error");
+        assertSame(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
     });
-    describe("throws RangeError for unsupported encodings:", () => {
-        const badEncodings = [
-            "csiso2022kr",
-            "hz-gb-2312",
-            "iso-2022-cn",
-            "iso-2022-cn-ext",
-            "iso-2022-kr",
-            "klingon-1"
-        ];
-        for (const encoding of badEncodings) {
-            it(encoding, () => {
-                expect(() => new TextDecoder(encoding)).toThrow(RangeError);
-            });
-        }
+    it("throws RangeError for unsupported encoding csiso2022kr:", () => {
+        assertThrowWithMessage(() => new TextDecoder("csiso2022kr"), RangeError, "Encoding not supported: csiso2022kr");
+    });
+    it("throws RangeError for unsupported encoding hz-gb-2312:", () => {
+        assertThrowWithMessage(() => new TextDecoder("hz-gb-2312"), RangeError, "Encoding not supported: hz-gb-2312");
+    });
+    it("throws RangeError for unsupported encoding iso-2022-cn:", () => {
+        assertThrowWithMessage(() => new TextDecoder("iso-2022-cn"), RangeError, "Encoding not supported: iso-2022-cn");
+    });
+    it("throws RangeError for unsupported encoding iso-2022-cn-ext:", () => {
+        assertThrowWithMessage(() => new TextDecoder("iso-2022-cn-ext"), RangeError, "Encoding not supported: iso-2022-cn-ext");
+    });
+    it("throws RangeError for unsupported encoding iso-2022-kr:", () => {
+        assertThrowWithMessage(() => new TextDecoder("iso-2022-kr"), RangeError, "Encoding not supported: iso-2022-kr");
+    });
+    it("throws RangeError for unsupported encoding klingon-1:", () => {
+        assertThrowWithMessage(() => new TextDecoder("klingon-1"), RangeError, "Encoding not supported: klingon-1");
     });
     it("can decode from an array buffer", () => {
         const bytes = [ 65, 66, 97, 98, 99, 100, 101, 102, 103, 104, 67, 68, 69, 70, 71, 72 ];
         const chars = "ABabcdefghCDEFGH";
-        expect(new TextDecoder().decode(new Uint8Array(bytes).buffer)).toBe(chars);
+        assertSame(new TextDecoder().decode(new Uint8Array(bytes).buffer), chars);
     });
     describe("can decode from any typed array with and without buffer offsets:", () => {
         const bytes = [ 65, 66, 97, 98, 99, 100, 101, 102, 103, 104, 67, 68, 69, 70, 71, 72 ];
@@ -220,80 +223,76 @@ describe("TextDecoder", () => {
         for (const type of types) {
             it(type.name, () => {
                 const array = new type(buffer);
-                expect(decoder.decode(array)).toBe(chars);
+                assertSame(decoder.decode(array), chars);
                 const bytes = type.BYTES_PER_ELEMENT;
                 const subset = new type(buffer, bytes, 8 / bytes);
-                expect(decoder.decode(subset)).toBe(chars.substring(bytes, bytes + 8));
+                assertSame(decoder.decode(subset), chars.substring(bytes, bytes + 8));
             });
         }
     });
     it("can decode iso-2022-jp", async () => {
         const encoded = await readData("iso-2022-jp-encoded.txt");
-        expect(new TextDecoder("iso-2022-jp").decode(encoded)).toBe(iso2022jp);
+        assertSame(new TextDecoder("iso-2022-jp").decode(encoded), iso2022jp);
     });
     it("can decode utf encodings with missing BOMs", () => {
-        expect(new TextDecoder("utf-8").decode(new Uint8Array(utf8))).toBe(utfSample);
-        expect(new TextDecoder("utf-16le").decode(new Uint8Array(utf16le))).toBe(utfSample);
-        expect(new TextDecoder("utf-16be").decode(new Uint8Array(utf16be))).toBe(utfSample);
+        assertSame(new TextDecoder("utf-8").decode(new Uint8Array(utf8)), utfSample);
+        assertSame(new TextDecoder("utf-16le").decode(new Uint8Array(utf16le)), utfSample);
+        assertSame(new TextDecoder("utf-16be").decode(new Uint8Array(utf16be)), utfSample);
     });
     it("can decode utf encodings with matching BOMs", () => {
-        expect(new TextDecoder("utf-8").decode(new Uint8Array(utf8BOM.concat(utf8)))).toBe(utfSample);
-        expect(new TextDecoder("utf-16le").decode(new Uint8Array(utf16leBOM.concat(utf16le)))).toBe(utfSample);
-        expect(new TextDecoder("utf-16be").decode(new Uint8Array(utf16beBOM.concat(utf16be)))).toBe(utfSample);
+        assertSame(new TextDecoder("utf-8").decode(new Uint8Array(utf8BOM.concat(utf8))), utfSample);
+        assertSame(new TextDecoder("utf-16le").decode(new Uint8Array(utf16leBOM.concat(utf16le))), utfSample);
+        assertSame(new TextDecoder("utf-16be").decode(new Uint8Array(utf16beBOM.concat(utf16be))), utfSample);
     });
     it("can decode utf-8 with splitted matching BOM", () => {
         const decoder = new TextDecoder("utf-8");
-        expect(decoder.decode(new Uint8Array(utf8BOM.slice(0, 1)), { stream: true })).toBe("");
-        expect(decoder.decode(new Uint8Array(utf8BOM.slice(1).concat(utf8)))).toBe(utfSample);
-        expect(decoder.decode(new Uint8Array(utf8BOM.slice(0, 2)), { stream: true })).toBe("");
-        expect(decoder.decode(new Uint8Array(utf8BOM.slice(2).concat(utf8)))).toBe(utfSample);
+        assertSame(decoder.decode(new Uint8Array(utf8BOM.slice(0, 1)), { stream: true }), "");
+        assertSame(decoder.decode(new Uint8Array(utf8BOM.slice(1).concat(utf8))), utfSample);
+        assertSame(decoder.decode(new Uint8Array(utf8BOM.slice(0, 2)), { stream: true }), "");
+        assertSame(decoder.decode(new Uint8Array(utf8BOM.slice(2).concat(utf8))), utfSample);
     });
     it("can decode utf-16le with splitted matching BOM", () => {
         const decoder = new TextDecoder("utf-16le");
-        expect(decoder.decode(new Uint8Array(utf16leBOM.slice(0, 1)), { stream: true })).toBe("");
-        expect(decoder.decode(new Uint8Array(utf16leBOM.slice(1).concat(utf16le)))).toBe(utfSample);
+        assertSame(decoder.decode(new Uint8Array(utf16leBOM.slice(0, 1)), { stream: true }), "");
+        assertSame(decoder.decode(new Uint8Array(utf16leBOM.slice(1).concat(utf16le))), utfSample);
     });
     it("can decode utf-16be with splitted matching BOM", () => {
         const decoder = new TextDecoder("utf-16be");
-        expect(decoder.decode(new Uint8Array(utf16beBOM.slice(0, 1)), { stream: true })).toBe("");
-        expect(decoder.decode(new Uint8Array(utf16beBOM.slice(1).concat(utf16be)))).toBe(utfSample);
+        assertSame(decoder.decode(new Uint8Array(utf16beBOM.slice(0, 1)), { stream: true }), "");
+        assertSame(decoder.decode(new Uint8Array(utf16beBOM.slice(1).concat(utf16be))), utfSample);
     });
     it("can not decode utf with mismatching BOMs", () => {
-        expect(new TextDecoder("utf-8").decode(new Uint8Array(utf16leBOM.concat(utf8)))).not.toBe(utfSample);
-        expect(new TextDecoder("utf-8").decode(new Uint8Array(utf16beBOM.concat(utf8)))).not.toBe(utfSample);
-        expect(new TextDecoder("utf-16le").decode(new Uint8Array(utf8BOM.concat(utf16le)))).not.toBe(utfSample);
-        expect(new TextDecoder("utf-16le").decode(new Uint8Array(utf16beBOM.concat(utf16le)))).not.toBe(utfSample);
-        expect(new TextDecoder("utf-16be").decode(new Uint8Array(utf8BOM.concat(utf16be)))).not.toBe(utfSample);
-        expect(new TextDecoder("utf-16be").decode(new Uint8Array(utf16leBOM.concat(utf16be)))).not.toBe(utfSample);
+        assertNotSame(new TextDecoder("utf-8").decode(new Uint8Array(utf16leBOM.concat(utf8))), utfSample);
+        assertNotSame(new TextDecoder("utf-8").decode(new Uint8Array(utf16beBOM.concat(utf8))), utfSample);
+        assertNotSame(new TextDecoder("utf-16le").decode(new Uint8Array(utf8BOM.concat(utf16le))), utfSample);
+        assertNotSame(new TextDecoder("utf-16le").decode(new Uint8Array(utf16beBOM.concat(utf16le))), utfSample);
+        assertNotSame(new TextDecoder("utf-16be").decode(new Uint8Array(utf8BOM.concat(utf16be))), utfSample);
+        assertNotSame(new TextDecoder("utf-16be").decode(new Uint8Array(utf16leBOM.concat(utf16be))), utfSample);
     });
     it("can decode utf with ignored BOM", () => {
-        expect(new TextDecoder("utf-8", { ignoreBOM: true }).decode(
-            new Uint8Array(utf8BOM.concat(utf8)))).toBe("\uFEFF" + utfSample);
-        expect(new TextDecoder("utf-16le", { ignoreBOM: true }).decode(
-            new Uint8Array(utf16leBOM.concat(utf16le)))).toBe("\uFEFF" + utfSample);
-        expect(new TextDecoder("utf-16be", { ignoreBOM: true }).decode(
-            new Uint8Array(utf16beBOM.concat(utf16be)))).toBe("\uFEFF" + utfSample);
+        assertSame(new TextDecoder("utf-8", { ignoreBOM: true }).decode(new Uint8Array(utf8BOM.concat(utf8))), `\uFEFF${utfSample}`);
+        assertSame(new TextDecoder("utf-16le", { ignoreBOM: true }).decode(new Uint8Array(utf16leBOM.concat(utf16le))), `\uFEFF${utfSample}`);
+        assertSame(new TextDecoder("utf-16be", { ignoreBOM: true }).decode(new Uint8Array(utf16beBOM.concat(utf16be))), `\uFEFF${utfSample}`);
     });
     it("can decode gbk", async () => {
         const encoded = await readData("gbk-encoded.txt");
-        expect(new TextDecoder("gbk").decode(encoded)).toBe(gbk);
+        assertSame(new TextDecoder("gbk").decode(encoded), gbk);
     });
     it("can decode shift_jis", async () => {
-        expect(new TextDecoder("shift_jis").decode(await readData("shift_jis-encoded.txt"))).toBe(shiftJIS);
-        expect(new TextDecoder("shift_jis").decode(new Uint8Array([ 0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1 ])))
-            .toBe("\u306B\u307B\u3093"); // Nihon);
+        assertSame(new TextDecoder("shift_jis").decode(await readData("shift_jis-encoded.txt")), shiftJIS);
+        assertSame(new TextDecoder("shift_jis").decode(new Uint8Array([ 0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1 ])), "\u306B\u307B\u3093"); // Nihon);
     });
     it("can decode big5", async () => {
         const encoded = await readData("big5-encoded.txt");
-        expect(new TextDecoder("big5").decode(encoded)).toBe(big5);
+        assertSame(new TextDecoder("big5").decode(encoded), big5);
     });
     it("can decode euc-jp", async () => {
         const encoded = await readData("euc-jp-encoded.txt");
-        expect(new TextDecoder("euc-jp").decode(encoded)).toBe(eucjp);
+        assertSame(new TextDecoder("euc-jp").decode(encoded), eucjp);
     });
     it("can decode euc-kr", async () => {
         const encoded = await readData("euc-kr-encoded.txt");
-        expect(new TextDecoder("euc-kr").decode(encoded)).toBe(euckr);
+        assertSame(new TextDecoder("euc-kr").decode(encoded), euckr);
     });
     it("can decode gb18030", () => {
         const tests = [
@@ -301,41 +300,41 @@ describe("TextDecoder", () => {
             { encoded: [ 0xA8, 0xBC, 0x81, 0x35, 0xF4, 0x37 ], decoded: "\u1E3F\uE7C7" }
         ];
         for (const test of tests) {
-            expect(new TextDecoder("gb18030").decode(new Uint8Array(test.encoded))).toBe(test.decoded);
+            assertSame(new TextDecoder("gb18030").decode(new Uint8Array(test.encoded)), test.decoded);
         }
     });
     it("can decode x-user-defined", () => {
         const decoder = new TextDecoder("x-user-defined");
         for (let i = 0; i < 0x80; ++i) {
-            expect(decoder.decode(new Uint8Array([ i ]))).toBe(String.fromCharCode(i));
-            expect(decoder.decode(new Uint8Array([ i + 0x80 ]))).toBe(String.fromCharCode(i + 0xF780));
+            assertSame(decoder.decode(new Uint8Array([ i ])), String.fromCharCode(i));
+            assertSame(decoder.decode(new Uint8Array([ i + 0x80 ])), String.fromCharCode(i + 0xF780));
         }
     });
     it("can decode utf-8", () => {
         const encoded = [ 0x7A, 0xC2, 0xA2, 0xE6, 0xB0, 0xB4, 0xF0, 0x9D, 0x84, 0x9E, 0xF4, 0x8F, 0xBF, 0xBD ];
-        expect(new TextDecoder("utf-8").decode(new Uint8Array(encoded))).toBe(utfSample);
+        assertSame(new TextDecoder("utf-8").decode(new Uint8Array(encoded)), utfSample);
     });
     it("can decode utf-16le", () => {
         const encoded = [ 0x7A, 0x00, 0xA2, 0x00, 0x34, 0x6C, 0x34, 0xD8, 0x1E, 0xDD, 0xFF, 0xDB, 0xFD, 0xDF ];
-        expect(new TextDecoder("utf-16le").decode(new Uint8Array(encoded))).toBe(utfSample);
+        assertSame(new TextDecoder("utf-16le").decode(new Uint8Array(encoded)), utfSample);
     });
     it("can decode utf-16", () => {
         const encoded = [ 0x7A, 0x00, 0xA2, 0x00, 0x34, 0x6C, 0x34, 0xD8, 0x1E, 0xDD, 0xFF, 0xDB, 0xFD, 0xDF ];
-        expect(new TextDecoder("utf-16").decode(new Uint8Array(encoded))).toBe(utfSample);
+        assertSame(new TextDecoder("utf-16").decode(new Uint8Array(encoded)), utfSample);
     });
     it("can decode utf-16be", () => {
         const encoded = [ 0x00, 0x7A, 0x00, 0xA2, 0x6C, 0x34, 0xD8, 0x34, 0xDD, 0x1E, 0xDB, 0xFF, 0xDF, 0xFD ];
-        expect(new TextDecoder("utf-16be").decode(new Uint8Array(encoded))).toBe(utfSample);
+        assertSame(new TextDecoder("utf-16be").decode(new Uint8Array(encoded)), utfSample);
     });
     it("correctly maps 0xCA to U+05BA in windows-1255 encoding", () => {
-        expect(new TextDecoder("windows-1255").decode(new Uint8Array([ 0xca ]))).toBe("\u05BA");
+        assertSame(new TextDecoder("windows-1255").decode(new Uint8Array([ 0xca ])), "\u05BA");
     });
     it("correctly decodes a very large input", () => {
         const data = new Uint16Array(1_000_000);
         data.fill(0x5400);
         const utf16 = new Uint8Array(data.buffer);
         const decoded = new TextDecoder("utf-16be").decode(utf16);
-        expect(decoded.length).toBe(1_000_000);
-        expect(decoded).toContain("TTTT");
+        assertSame(decoded.length, 1_000_000);
+        assertContain(decoded, "TTTT");
     });
 });

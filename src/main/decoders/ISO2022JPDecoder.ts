@@ -4,50 +4,34 @@
  */
 
 import jis0208 from "../../../data/jis0208.cp.js";
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { inRange } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange } from "../util.ts";
 
-enum State {
-    ASCII = 0,
-    Roman = 1,
-    Katakana = 2,
-    LeadByte = 3,
-    TrailByte = 4,
-    EscapeStart = 5,
-    Escape = 6
-}
+type State = typeof State[keyof typeof State];
+const State = {
+    ASCII: 0,
+    Roman: 1,
+    Katakana: 2,
+    LeadByte: 3,
+    TrailByte: 4,
+    EscapeStart: 5,
+    Escape: 6
+} as const;
 
 /**
  * Decoder for iso-2022-jp encoding.
  */
 export class ISO2022JPDecoder extends AbstractDecoder {
-    private state = State.ASCII;
+    private state: State = State.ASCII;
     private lead = 0x00;
     private outputFlag = false;
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): null | number | number[] {
         const byte = buffer.read();
         switch (this.state) {
-            default:
-            case State.ASCII:
-                if (byte === 0x1B) {
-                    this.state = State.EscapeStart;
-                    return null;
-                }
-                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E
-                    && byte !== 0x0F && byte !== 0x1B) {
-                    this.outputFlag = false;
-                    return byte;
-                }
-                if (byte === END_OF_BUFFER) {
-                    return FINISHED;
-                }
-                this.outputFlag = false;
-                return this.fail();
-
             case State.Roman:
                 if (byte === 0x1B) {
                     this.state = State.EscapeStart;
@@ -164,6 +148,22 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                 this.state = State.ASCII;
                 return this.fail();
             }
+
+            default:
+                if (byte === 0x1B) {
+                    this.state = State.EscapeStart;
+                    return null;
+                }
+                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E
+                    && byte !== 0x0F && byte !== 0x1B) {
+                    this.outputFlag = false;
+                    return byte;
+                }
+                if (byte === END_OF_BUFFER) {
+                    return FINISHED;
+                }
+                this.outputFlag = false;
+                return this.fail();
         }
     }
 }

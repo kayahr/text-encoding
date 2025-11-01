@@ -4,10 +4,10 @@
  */
 
 import euckr from "../../../data/euc-kr.cp.js";
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { inRange, isASCII } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { inRange, isASCII } from "../util.ts";
 
 /**
  * Decoder for euc-kr encoding.
@@ -15,7 +15,7 @@ import { inRange, isASCII } from "../util.js";
 export class EUCKRDecoder extends AbstractDecoder {
     private lead = 0x00;
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER && this.lead !== 0) {

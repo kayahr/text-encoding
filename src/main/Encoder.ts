@@ -3,7 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer.js";
+import type { ByteBuffer } from "./ByteBuffer.ts";
 
 /** Encoder constructor type. */
 export type EncoderConstructor = new () => Encoder;
@@ -16,7 +16,7 @@ export interface Encoder {
      * Encodes the next code point(s) in the given buffer and returns the encoded bytes.
      *
      * @param buffer - The buffer containing the code points to encode.
-     * @return The encoded byte(s) to emit, or {@link ./constants/FINISHED} when encoding is finished.
+     * @returns The encoded byte(s) to emit, or {@link ./constants/FINISHED} when encoding is finished.
      */
     encode(buffer: ByteBuffer): number | number[];
 }

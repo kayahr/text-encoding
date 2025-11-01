@@ -3,8 +3,8 @@
  * See LICENSE.md for licensing information.
  */
 
-import { Decoder, DecoderConstructor } from "./Decoder.js";
-import { Encoder, EncoderConstructor } from "./Encoder.js";
+import type { Decoder, DecoderConstructor } from "./Decoder.ts";
+import type { Encoder, EncoderConstructor } from "./Encoder.ts";
 
 /** Map with registered encodings. Map key is any lower-cased encoding label. */
 const encodings = new Map<string, Encoding>();
@@ -16,7 +16,7 @@ const encodings = new Map<string, Encoding>();
  * @param labels  - The list of encoding labels.
  * @param decoder - The constructor of the decoder which can decode this encoding.
  * @param encoder - The constructor of the encoder which can encode this encoding.
- * @return The created and registered encoding.
+ * @returns The created and registered encoding.
  */
 export function registerEncoding(name: string, labels: readonly string[], decoder: DecoderConstructor,
         encoder: EncoderConstructor): Encoding {
@@ -31,13 +31,13 @@ export function registerEncoding(name: string, labels: readonly string[], decode
  * Returns the encoding for the specified label.
  *
  * @param label - The label of the encoding to look for.
- * @return The found encoding.
+ * @returns The found encoding.
  * @throws RangeError - When encoding was not found.
  */
 export function getEncoding(label: string): Encoding {
     const encoding = encodings.get(label.trim().toLowerCase());
     if (encoding == null) {
-        throw new RangeError("Encoding not supported: " + label);
+        throw new RangeError(`Encoding not supported: ${label}`);
     }
     return encoding;
 }
@@ -46,25 +46,37 @@ export function getEncoding(label: string): Encoding {
  * Encoding.
  */
 export class Encoding {
+    /** The encoding name. */
+    private readonly name: string;
+
+    /** The list of encoding labels. */
+    private readonly labels: readonly string[];
+
+    /** The constructor of the decoder which can decode this encoding. */
+    private readonly decoder: DecoderConstructor;
+
+    /** The constructor of the encoder which can encode this encoding. */
+    private readonly encoder: EncoderConstructor;
+
     /**
      * Creates a new encoding.
      *
-     * @param name - THe encoding name.
+     * @param name - The encoding name.
      * @param labels - The list of encoding labels.
      * @param decoder - The constructor of the decoder which can decode this encoding.
      * @param encoder - The constructor of the encoder which can encode this encoding.
      */
-    public constructor(
-        private readonly name: string,
-        private readonly labels: readonly string[],
-        private readonly decoder: DecoderConstructor,
-        private readonly encoder: EncoderConstructor
-    ) {}
+    public constructor(name: string, labels: readonly string[], decoder: DecoderConstructor, encoder: EncoderConstructor) {
+        this.name = name;
+        this.labels = labels;
+        this.decoder = decoder;
+        this.encoder = encoder;
+    }
 
     /**
      * Returns the encoding name.
      *
-     * @return The encoding name.
+     * @returns The encoding name.
      */
     public getName(): string {
         return this.name;
@@ -74,7 +86,7 @@ export class Encoding {
      * Checks if encoding has the given label.
      *
      * @param label - The label to check.
-     * @return True if encoding has the label, false if not.
+     * @returns True if encoding has the label, false if not.
      */
     public hasLabel(label: string): boolean {
         return this.labels.includes(label.trim().toLowerCase());
@@ -83,7 +95,7 @@ export class Encoding {
     /**
      * Returns the labels of this encoding.
      *
-     * @return The encoding labels.
+     * @returns The encoding labels.
      */
     public getLabels(): readonly string[] {
         return this.labels;
@@ -94,7 +106,7 @@ export class Encoding {
      *
      * @param fatal - True to throw exception on decoding errors, false to use replacement characters instead for
      *                characters which can't be decoded.
-     * @return The created decoder.
+     * @returns The created decoder.
      */
     public createDecoder(fatal?: boolean): Decoder {
         return new this.decoder(fatal);
@@ -103,7 +115,7 @@ export class Encoding {
     /**
      * Creates a new encoder for this encoding.
      *
-     * @return The created encoder.
+     * @returns The created encoder.
      */
     public createEncoder(): Encoder {
         return new this.encoder();

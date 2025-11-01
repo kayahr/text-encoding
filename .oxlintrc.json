@@ -1,0 +1,17 @@
+{
+    "$schema": "node_modules/oxlint/configuration_schema.json",
+    "extends": [
+        "node_modules/@kayahr/oxlint-config/.oxlintrc.json"
+    ],
+    "env": {
+        "node": true
+    },
+    "ignorePatterns": [
+        "data/**/*.cp.js",
+        "data/**/*.ranges.js",
+        "src/test/data/*.ts"
+    ],
+    "rules": {
+        "unicorn/filename-case": "off"
+    }
+}

@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ShiftJISDecoder } from "../decoders/ShiftJISDecoder.js";
-import { ShiftJISEncoder } from "../encoders/ShiftJISEncoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { ShiftJISDecoder } from "../decoders/ShiftJISDecoder.ts";
+import { ShiftJISEncoder } from "../encoders/ShiftJISEncoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "shift_jis",

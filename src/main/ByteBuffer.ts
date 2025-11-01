@@ -26,7 +26,7 @@ export class ByteBuffer {
     /**
      * Checks if end of buffer has been hit.
      *
-     * @return True if end of buffer, false if not.
+     * @returns True if end of buffer, false if not.
      */
     public isEndOfBuffer(): boolean {
         return this.bytes.length === 0;
@@ -36,7 +36,7 @@ export class ByteBuffer {
      * Reads the next byte from the buffer and returns it. END_OF_BUFFER is returned when there are no more bytes to
      * read.
      *
-     * @return The read byte or END_OF_BUFFER when no more bytes to read.
+     * @returns The read byte or END_OF_BUFFER when no more bytes to read.
      */
     public read(): number {
         return this.bytes.pop() ?? END_OF_BUFFER;

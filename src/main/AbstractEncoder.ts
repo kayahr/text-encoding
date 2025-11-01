@@ -3,14 +3,14 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer.js";
-import { Encoder } from "./Encoder.js";
+import type { ByteBuffer } from "./ByteBuffer.ts";
+import type { Encoder } from "./Encoder.ts";
 
 /**
  * Base class for encoders.
  */
 export abstract class AbstractEncoder implements Encoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public abstract encode(buffer: ByteBuffer): number | number[];
 
     /**
@@ -19,6 +19,6 @@ export abstract class AbstractEncoder implements Encoder {
      * @param codePoint - The code point which could not be encoded.
      */
     protected fail(codePoint: number): never {
-        throw TypeError(`The code point ${codePoint} could not be encoded`);
+        throw new TypeError(`The code point ${codePoint} could not be encoded`);
     }
 }

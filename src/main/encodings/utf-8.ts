@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { UTF8Decoder } from "../decoders/UTF8Decoder.js";
-import { UTF8Encoder } from "../encoders/UTF8Encoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { UTF8Decoder } from "../decoders/UTF8Decoder.ts";
+import { UTF8Encoder } from "../encoders/UTF8Encoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "utf-8",

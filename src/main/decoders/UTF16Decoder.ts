@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { AbstractDecoder } from "../AbstractDecoder.js";
-import { ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.js";
-import { FINISHED } from "../constants.js";
-import { convertCodeUnitToBytes, inRange } from "../util.js";
+import { AbstractDecoder } from "../AbstractDecoder.ts";
+import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
+import { FINISHED } from "../constants.ts";
+import { convertCodeUnitToBytes, inRange } from "../util.ts";
 
 /**
  * Base class for UTF-16 decoders.
@@ -26,7 +26,7 @@ export abstract class UTF16Decoder extends AbstractDecoder {
         this.bigEndian = bigEndian;
     }
 
-    /** @inheritDoc */
+    /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER && (this.leadByte !== null || this.leadSurrogate !== null)) {
@@ -70,7 +70,7 @@ export abstract class UTF16Decoder extends AbstractDecoder {
  * Decoder for utf-16le encoding.
  */
 export class UTF16LEDecoder extends UTF16Decoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public constructor(fatal?: boolean) {
         super(false, fatal);
     }
@@ -80,7 +80,7 @@ export class UTF16LEDecoder extends UTF16Decoder {
  * Decoder for utf-16be encoding.
  */
 export class UTF16BEDecoder extends UTF16Decoder {
-    /** @inheritDoc */
+    /** @inheritdoc */
     public constructor(fatal?: boolean) {
         super(true, fatal);
     }

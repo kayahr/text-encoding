@@ -3,10 +3,10 @@
  * See LICENSE.md for licensing information.
  */
 
-import { ByteBuffer } from "./ByteBuffer.js";
-import { DEFAULT_ENCODING, FINISHED } from "./constants.js";
-import { Decoder } from "./Decoder.js";
-import { Encoding, getEncoding } from "./Encoding.js";
+import { ByteBuffer } from "./ByteBuffer.ts";
+import { DEFAULT_ENCODING, FINISHED } from "./constants.ts";
+import type { Decoder } from "./Decoder.ts";
+import { type Encoding, getEncoding } from "./Encoding.ts";
 
 /**
  * The TextDecoder represents a decoder for a specific text encoding, such as UTF-8, ISO-8859-2, KOI8-R, GBK, etc.
@@ -34,7 +34,7 @@ export class TextDecoder implements globalThis.TextDecoder {
         this.ignoreBOM = ignoreBOM;
     }
 
-    /** @return The name of the encoding. */
+    /** @returns The name of the encoding. */
     public get encoding(): string {
         return this.enc.getName();
     }
@@ -44,7 +44,7 @@ export class TextDecoder implements globalThis.TextDecoder {
      *
      * @param input   - The input to decode.
      * @param options - The decoding options.
-     * @return The decoded string.
+     * @returns The decoded string.
      */
     public decode(input?: BufferSource | ArrayBufferLike | ArrayBufferView, { stream = false }: TextDecodeOptions = {}): string {
         let bytes;

@@ -3,9 +3,9 @@
  * See LICENSE.md for licensing information.
  */
 
-import { Big5Decoder } from "../decoders/Big5Decoder.js";
-import { Big5Encoder } from "../encoders/Big5Encoder.js";
-import { registerEncoding } from "../Encoding.js";
+import { Big5Decoder } from "../decoders/Big5Decoder.ts";
+import { Big5Encoder } from "../encoders/Big5Encoder.ts";
+import { registerEncoding } from "../Encoding.ts";
 
 registerEncoding(
     "big5",
