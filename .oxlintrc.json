@@ -10,8 +10,5 @@
         "data/**/*.cp.js",
         "data/**/*.ranges.js",
         "src/test/data/*.ts"
-    ],
-    "rules": {
-        "unicorn/filename-case": "off"
-    }
+    ]
 }
