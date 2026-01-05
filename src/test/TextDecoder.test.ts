@@ -26,7 +26,7 @@ const utf16le = [ 0x7A, 0x00, 0xA2, 0x00, 0x34, 0x6C, 0x34, 0xD8, 0x1E, 0xDD, 0x
 const utf16beBOM = [ 0xfe, 0xff ];
 const utf16be = [ 0x00, 0x7A, 0x00, 0xA2, 0x6C, 0x34, 0xD8, 0x34, 0xDD, 0x1E, 0xDB, 0xFF, 0xDF, 0xFD ];
 
-// z, cent, CJK water, G-Clef, Private-use character
+// Parts: z, cent, CJK water, G-Clef, Private-use character
 const utfSample = "z\xA2\u6C34\uD834\uDD1E\uDBFF\uDFFD";
 
 const UTF8_ENCODING = [ "utf-8" ];
@@ -72,20 +72,20 @@ describe("TextDecoder", () => {
     });
     it("throws exception on bad input when fatal flag is true", () => {
         const badInputs = [
-            { encoding: "utf-8", input: [ 0xC0 ] }, // ends early
-            { encoding: "utf-8", input: [ 0xC0, 0x00 ] }, // invalid trail
-            { encoding: "utf-8", input: [ 0xC0, 0xC0 ] }, // invalid trail
-            { encoding: "utf-8", input: [ 0xE0 ] }, // ends early
-            { encoding: "utf-8", input: [ 0xE0, 0x00 ] }, // invalid trail
-            { encoding: "utf-8", input: [ 0xE0, 0xC0 ] }, // invalid trail
-            { encoding: "utf-8", input: [ 0xE0, 0x80, 0x00 ] }, // invalid trail
-            { encoding: "utf-8", input: [ 0xE0, 0x80, 0xC0 ] }, // invalid trail
+            { encoding: "utf-8", input: [ 0xC0 ] }, // Ends early
+            { encoding: "utf-8", input: [ 0xC0, 0x00 ] }, // Invalid trail
+            { encoding: "utf-8", input: [ 0xC0, 0xC0 ] }, // Invalid trail
+            { encoding: "utf-8", input: [ 0xE0 ] }, // Ends early
+            { encoding: "utf-8", input: [ 0xE0, 0x00 ] }, // Invalid trail
+            { encoding: "utf-8", input: [ 0xE0, 0xC0 ] }, // Invalid trail
+            { encoding: "utf-8", input: [ 0xE0, 0x80, 0x00 ] }, // Invalid trail
+            { encoding: "utf-8", input: [ 0xE0, 0x80, 0xC0 ] }, // Invalid trail
             { encoding: "utf-8", input: [ 0xFC, 0x80, 0x80, 0x80, 0x80, 0x80 ] }, // > 0x10FFFF
-            { encoding: "utf-16le", input: [ 0x00 ] }, // truncated code unit
-            { encoding: "utf-16le", input: [ 0x00, 0xd8 ] }, // surrogate half
-            { encoding: "utf-16le", input: [ 0x00, 0xd8, 0x00, 0x00 ] }, // surrogate half
-            { encoding: "utf-16le", input: [ 0x00, 0xdc, 0x00, 0x00 ] }, // trail surrogate
-            { encoding: "utf-16le", input: [ 0x00, 0xdc, 0x00, 0xd8 ] }  // swapped surrogates
+            { encoding: "utf-16le", input: [ 0x00 ] }, // Truncated code unit
+            { encoding: "utf-16le", input: [ 0x00, 0xd8 ] }, // Surrogate half
+            { encoding: "utf-16le", input: [ 0x00, 0xd8, 0x00, 0x00 ] }, // Surrogate half
+            { encoding: "utf-16le", input: [ 0x00, 0xdc, 0x00, 0x00 ] }, // Trail surrogate
+            { encoding: "utf-16le", input: [ 0x00, 0xdc, 0x00, 0xd8 ] }  // Swapped surrogates
         ];
         for (const badInput of badInputs) {
             const encoded = new Uint8Array(badInput.input);
