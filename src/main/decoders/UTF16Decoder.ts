@@ -39,12 +39,7 @@ export abstract class UTF16Decoder extends AbstractDecoder {
             this.leadByte = byte;
             return null;
         }
-        let codeUnit: number;
-        if (this.bigEndian) {
-            codeUnit = (this.leadByte << 8) + byte;
-        } else {
-            codeUnit = (byte << 8) + this.leadByte;
-        }
+        const codeUnit = this.bigEndian ? (this.leadByte << 8) + byte : (byte << 8) + this.leadByte;
         this.leadByte = null;
         if (this.leadSurrogate !== null) {
             const leadSurrogate = this.leadSurrogate;

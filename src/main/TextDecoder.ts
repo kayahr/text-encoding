@@ -72,11 +72,7 @@ export class TextDecoder implements globalThis.TextDecoder {
                 break;
             }
             if (result != null) {
-                if (typeof result === "number") {
-                    output += String.fromCodePoint(result);
-                } else {
-                    output += String.fromCodePoint(...result);
-                }
+                output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
             }
         }
         if (!stream) {
@@ -86,11 +82,7 @@ export class TextDecoder implements globalThis.TextDecoder {
                     break;
                 }
                 if (result != null) {
-                    if (typeof result === "number") {
-                        output += String.fromCodePoint(result);
-                    } else {
-                        output += String.fromCodePoint(...result);
-                    }
+                    output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
                 }
             } while (!inputStream.isEndOfBuffer());
             this.decoder = null;

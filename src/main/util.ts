@@ -24,11 +24,7 @@ export function isASCII(value: number): boolean {
 export function convertCodeUnitToBytes(codeUnit: number, bigEndian: boolean): [ number, number ] {
     const byte1 = codeUnit >> 8;
     const byte2 = codeUnit & 0x00FF;
-    if (bigEndian) {
-        return [ byte1, byte2 ];
-    } else {
-        return [ byte2, byte1 ];
-    }
+    return bigEndian ? [ byte1, byte2 ] : [ byte2, byte1 ];
 }
 
 /**

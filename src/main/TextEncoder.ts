@@ -137,9 +137,5 @@ export class TextEncoder implements globalThis.TextEncoder {
  * @returns The created text encoder.
  */
 export function createTextEncoder(label = "utf-8"): globalThis.TextEncoder | TextEncoder {
-    if (label === "utf-8" && typeof globalThis.TextEncoder === "function") {
-        return new globalThis.TextEncoder();
-    } else {
-        return new TextEncoder(label);
-    }
+    return label === "utf-8" && typeof globalThis.TextEncoder === "function" ? new globalThis.TextEncoder() : new TextEncoder(label);
 }
