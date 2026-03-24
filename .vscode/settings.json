@@ -1,10 +1,9 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib",
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
     "files.exclude": {
         "lib": true,
         "node_modules": true
     },
-    "task.allowAutomaticTasks": "on",
     "nodejs-testing.extensions": [
         {
             "extensions": [ "ts" ],
