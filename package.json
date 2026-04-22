@@ -57,6 +57,6 @@
         "@kayahr/oxlint-config": "1.31.1",
         "@kayahr/typedoc": "0.28.18-bundle.1",
         "@types/node": "25.5.0",
-        "typescript": "6.0.2"
+        "typescript": "6.0.3"
     }
 }
