@@ -4,5 +4,6 @@
  */
 
 import "./encodings.ts";
+
 export * from "./TextDecoder.ts";
 export * from "./TextEncoder.ts";

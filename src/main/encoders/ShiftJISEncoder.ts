@@ -9,6 +9,8 @@ import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
 import { inRange, isASCII } from "../util.ts";
 
+let shiftJIS: Array<number | number[] | null> | null = null;
+
 /**
  * Returns the index for the given code point.
  *
@@ -16,10 +18,9 @@ import { inRange, isASCII } from "../util.ts";
  * @returns The found index or null if not found.
  */
 function getIndex(codePoint: number): number | null {
-    shiftJIS = shiftJIS ?? jis0208.map((codePoint, index) => (inRange(index, 8272, 8835) ? null : codePoint));
+    shiftJIS ??= jis0208.map((codePoint, index) => (inRange(index, 8272, 8835) ? null : codePoint));
     return shiftJIS.indexOf(codePoint);
 }
-let shiftJIS: Array<number | number[] | null> | null = null;
 
 /**
  * Encoder for shift_jis encoding.

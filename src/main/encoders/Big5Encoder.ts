@@ -9,6 +9,8 @@ import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
 import { indexOf, isASCII } from "../util.ts";
 
+let big5WithoutHKSCs: Array<number | null> | null = null;
+
 /**
  * Returns the index for the given code point.
  *
@@ -16,9 +18,7 @@ import { indexOf, isASCII } from "../util.ts";
  * @returns The found index or null if not found.
  */
 function getIndex(codePoint: number): number | null {
-    big5WithoutHKSCs = big5WithoutHKSCs ?? big5.map((codePoint, index) =>
-        ((index < (0xA1 - 0x81) * 157) ? null : codePoint)
-    );
+    big5WithoutHKSCs ??= big5.map((codePoint, index) => ((index < (0xA1 - 0x81) * 157) ? null : codePoint));
     const index = big5WithoutHKSCs;
     if (codePoint === 0x2550 || codePoint === 0x255E || codePoint === 0x2561 || codePoint === 0x256A
             || codePoint === 0x5341 || codePoint === 0x5345) {
@@ -26,7 +26,6 @@ function getIndex(codePoint: number): number | null {
     }
     return indexOf(index, codePoint);
 }
-let big5WithoutHKSCs: Array<number | null> | null = null;
 
 /**
  * Encoder for big5 encoding.
