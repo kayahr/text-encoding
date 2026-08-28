@@ -3,5 +3,7 @@
  * See LICENSE.md for licensing information.
  */
 
+import "./encodings/utf-8.ts";
+
 export * from "./TextDecoder.ts";
 export * from "./TextEncoder.ts";
