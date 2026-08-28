@@ -290,6 +290,19 @@ describe("TextDecoder", () => {
         const encoded = await readData("euc-jp-encoded.txt");
         assertSame(new TextDecoder("euc-jp").decode(encoded), eucjp);
     });
+    it("can decode JIS0212 characters from euc-jp", () => {
+        const tests = [
+            { encoded: [ 0x8F, 0xA2, 0xAF ], decoded: "\u02D8" },
+            { encoded: [ 0x8F, 0xB0, 0xA1 ], decoded: "\u4E02" },
+            { encoded: [ 0x8F, 0xB6, 0xBB ], decoded: "\u563C" },
+            { encoded: [ 0x8F, 0xCB, 0xD5 ], decoded: "\u7395" },
+            { encoded: [ 0x8F, 0xE0, 0xEF ], decoded: "\u8F20" },
+            { encoded: [ 0x8F, 0xED, 0xE3 ], decoded: "\u9FA5" }
+        ];
+        for (const test of tests) {
+            assertSame(new TextDecoder("euc-jp").decode(new Uint8Array(test.encoded)), test.decoded);
+        }
+    });
     it("can decode euc-kr", async () => {
         const encoded = await readData("euc-kr-encoded.txt");
         assertSame(new TextDecoder("euc-kr").decode(encoded), euckr);
