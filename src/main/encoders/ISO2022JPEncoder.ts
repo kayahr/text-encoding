@@ -5,7 +5,7 @@
 
 import iso2022jpKatakana from "../../../data/iso-2022-jp-katakana.cp.js";
 import jis0208 from "../../../data/jis0208.cp.js";
-import { AbstractEncoder } from "../AbstractEncoder.ts";
+import { AbstractEncoder, NO_TRAILING_BYTES } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
 import { inRange, indexOf, isASCII } from "../util.ts";
@@ -17,11 +17,18 @@ const State = {
     jis0208: 2
 } as const;
 
+const ASCII_ESCAPE: readonly number[] = [ 0x1B, 0x28, 0x42 ];
+
 /**
  * Encoder for iso-2022-jp encoding.
  */
 export class ISO2022JPEncoder extends AbstractEncoder {
     private state: State = State.ASCII;
+
+    /** @inheritdoc */
+    public override getTrailingBytes(): readonly number[] {
+        return this.state === State.ASCII ? NO_TRAILING_BYTES : ASCII_ESCAPE;
+    }
 
     /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {

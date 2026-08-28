@@ -45,12 +45,45 @@ function stringToCodePoints(string: string): number[] {
 }
 
 /**
+ * Adds encoded bytes to the given output array.
+ *
+ * @param output - Output array to add the encoded bytes to.
+ * @param result - Encoded byte or bytes to add.
+ */
+function appendEncodedBytes(output: number[], result: number | number[]): void {
+    if (Array.isArray(result)) {
+        output.push(...result);
+    } else {
+        output.push(result);
+    }
+}
+
+/**
+ * Encodes a single code point with the given encoder.
+ *
+ * @param encoder   - Encoder to use.
+ * @param codePoint - Code point to encode.
+ * @returns Encoded bytes, including any required state prefix.
+ */
+function encodeCodePoint(encoder: Encoder, codePoint: number): number[] {
+    const input = new ByteBuffer([ codePoint ]);
+    const output: number[] = [];
+    while (!input.isEndOfBuffer()) {
+        const result = encoder.encode(input);
+        if (result === FINISHED) {
+            break;
+        }
+        appendEncodedBytes(output, result);
+    }
+    return output;
+}
+
+/**
  * The TextEncoder represents an encoder for a specific text encoding, such as UTF-8, ISO-8859-2, KOI8-R, GBK, etc.
  * An encoder takes a string and emits an array of encoded bytes.
  */
 export class TextEncoder implements globalThis.TextEncoder {
     private readonly enc: Encoding;
-    private encoder: Encoder | null = null;
 
     /**
      * Creates a new encoder for the given encoding.
@@ -73,23 +106,18 @@ export class TextEncoder implements globalThis.TextEncoder {
      * @returns The encoded bytes.
      */
     public encode(input = ""): Uint8Array<ArrayBuffer> {
-        // Initialize encoder if not already done
-        this.encoder ??= this.enc.createEncoder();
+        const encoder = this.enc.createEncoder();
 
         // Encode the input string
         const inputStream = new ByteBuffer(stringToCodePoints(input));
-        const output = [];
+        const output: number[] = [];
         let result: number | number[] | null;
         while (true) {
-            result = this.encoder.encode(inputStream);
+            result = encoder.encode(inputStream);
             if (result === FINISHED) {
                 break;
             }
-            if (Array.isArray(result)) {
-                output.push(...result);
-            }  else {
-                output.push(result);
-            }
+            appendEncodedBytes(output, result);
         }
 
         // Create and return byte array with encoded string
@@ -98,32 +126,30 @@ export class TextEncoder implements globalThis.TextEncoder {
 
     /** @inheritdoc */
     public encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult {
-        // Initialize encoder if not already done
-        this.encoder ??= this.enc.createEncoder();
-
-        // Encode the input string
-        const inputStream = new ByteBuffer(stringToCodePoints(source));
-        let result: number | number[] | null;
+        const encoder = this.enc.createEncoder();
         let read = 0;
         let written = 0;
-        while (written < destination.byteLength) {
-            result = this.encoder.encode(inputStream);
-            if (result === FINISHED) {
+        let trailingBytes = encoder.getTrailingBytes();
+
+        // Keep each accepted source prefix independently decodable, including final bytes for stateful encodings.
+        for (const codePoint of stringToCodePoints(source)) {
+            if (written === destination.byteLength) {
                 break;
             }
-            if (Array.isArray(result)) {
-                if (result.length + written > destination.byteLength) {
-                    break;
-                }
-                destination.set(result, written);
-                written += result.length;
-            } else {
-                destination[written++] = result;
+            const bytes = encodeCodePoint(encoder, codePoint);
+            const candidateTrailingBytes = encoder.getTrailingBytes();
+            if (written + bytes.length + candidateTrailingBytes.length > destination.byteLength) {
+                break;
             }
-            read++;
+            destination.set(bytes, written);
+            written += bytes.length;
+            read += codePoint > 0xFFFF ? 2 : 1;
+            trailingBytes = candidateTrailingBytes;
         }
 
-        // Report back number of code points read and bytes written
+        destination.set(trailingBytes, written);
+        written += trailingBytes.length;
+
         return { read, written };
     }
 }

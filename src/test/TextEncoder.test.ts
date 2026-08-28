@@ -16,13 +16,15 @@ import { readData } from "./util/readData.ts";
 import { assertEquals, assertSame, assertThrowWithMessage } from "@kayahr/assert";
 
 const UTF8_ENCODING = [ "utf-8" ];
-const LEGACY_ENCODINGS = [
+const SINGLE_BYTE_ENCODINGS = [
     "ibm866", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
     "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
     "windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254", "windows-1255",
-    "windows-1256", "windows-1257", "windows-1258", "x-mac-cyrillic", "gbk", "gb18030", "big5", "euc-jp",
-    "iso-2022-jp", "shift_jis", "euc-kr", "utf-16le", "utf-16be"
+    "windows-1256", "windows-1257", "windows-1258", "x-mac-cyrillic", "x-user-defined"
 ];
+const LEGACY_ENCODINGS = SINGLE_BYTE_ENCODINGS.filter(encoding => encoding !== "x-user-defined").concat([
+    "gbk", "gb18030", "big5", "euc-jp", "iso-2022-jp", "shift_jis", "euc-kr", "utf-16le", "utf-16be"
+]);
 const ASCII_SUPERSETS = UTF8_ENCODING.concat(LEGACY_ENCODINGS).filter(e => e !== "utf-16le" && e !== "utf-16be");
 
 describe("TextEncoder", () => {
@@ -46,6 +48,88 @@ describe("TextEncoder", () => {
             assertSame(new TextEncoder(encoding.label.toLowerCase()).encoding, encoding.encoding);
             assertSame(new TextEncoder(encoding.label.toUpperCase()).encoding, encoding.encoding);
         }
+    });
+    describe("encodeInto", () => {
+        function assertResult(encoding: string, source: string, destinationSize: number, expectedRead: number,
+                expectedBytes: number[]): void {
+            const destination = new Uint8Array(destinationSize).fill(0xCC);
+            const result = new TextEncoder(encoding).encodeInto(source, destination);
+            assertEquals(result, { read: expectedRead, written: expectedBytes.length });
+            assertEquals(destination.subarray(0, result.written), new Uint8Array(expectedBytes));
+            assertEquals(destination.subarray(result.written), new Uint8Array(destinationSize - result.written).fill(0xCC));
+        }
+
+        describe("UTF-8", () => {
+            it("counts UTF-16 code units", () => {
+                assertResult("utf-8", "A💩B", 5, 3, [ 0x41, 0xF0, 0x9F, 0x92, 0xA9 ]);
+            });
+            it("does not split a multi-byte sequence", () => {
+                assertResult("utf-8", "💩", 3, 0, []);
+                assertResult("utf-8", "💩", 4, 2, [ 0xF0, 0x9F, 0x92, 0xA9 ]);
+            });
+            it("counts a lone surrogate as one code unit", () => {
+                assertResult("utf-8", "\uD800A", 3, 1, [ 0xEF, 0xBF, 0xBD ]);
+            });
+        });
+        describe("single-byte encodings", () => {
+            it("encodes mapped non-ASCII characters", () => {
+                assertResult("windows-1252", "€A", 1, 1, [ 0x80 ]);
+            });
+            for (const encoding of SINGLE_BYTE_ENCODINGS) {
+                it(encoding, () => {
+                    assertResult(encoding, "ABC", 4, 3, [ 0x41, 0x42, 0x43 ]);
+                    assertResult(encoding, "ABC", 2, 2, [ 0x41, 0x42 ]);
+                    assertResult(encoding, "A", 0, 0, []);
+                });
+            }
+        });
+        describe("multi-byte encodings", () => {
+            it("UTF-16LE", () => {
+                assertResult("utf-16le", "A", 1, 0, []);
+                assertResult("utf-16le", "A💩B", 6, 3, [ 0x41, 0x00, 0x3D, 0xD8, 0xA9, 0xDC ]);
+            });
+            it("Shift_JIS", () => {
+                assertResult("shift_jis", "\u306B", 1, 0, []);
+                assertResult("shift_jis", "\u306B\u307B", 2, 1, [ 0x82, 0xC9 ]);
+            });
+            it("GB18030", () => {
+                assertResult("gb18030", "💩", 3, 0, []);
+                assertResult("gb18030", "💩A", 4, 2, [ 0x94, 0x39, 0xDA, 0x33 ]);
+            });
+            it("does not inspect input after filling the destination", () => {
+                assertResult("shift_jis", "A💩", 1, 1, [ 0x41 ]);
+            });
+        });
+        describe("ISO-2022-JP", () => {
+            const encodedJapaneseCharacter = [ 0x1B, 0x24, 0x42, 0x46, 0x7C, 0x1B, 0x28, 0x42 ];
+
+            it("does not write an escape prefix without its character", () => {
+                assertResult("iso-2022-jp", "\u65E5", 3, 0, []);
+                assertResult("iso-2022-jp", "\u65E5", 5, 0, []);
+            });
+            it("writes a complete independently decodable source prefix", () => {
+                assertResult("iso-2022-jp", "\u65E5A", 8, 1, encodedJapaneseCharacter);
+                assertResult("iso-2022-jp", "\u65E5A", 9, 2, [ ...encodedJapaneseCharacter, 0x41 ]);
+            });
+            it("keeps the encoding state between accepted characters", () => {
+                assertResult("iso-2022-jp", "\u65E5\u672C", 10, 2,
+                    [ 0x1B, 0x24, 0x42, 0x46, 0x7C, 0x4B, 0x5C, 0x1B, 0x28, 0x42 ]);
+            });
+            it("starts each call in the ASCII state", () => {
+                const encoder = new TextEncoder("iso-2022-jp");
+                const japaneseDestination = new Uint8Array(8);
+                assertEquals(encoder.encodeInto("\u65E5A", japaneseDestination), { read: 1, written: 8 });
+                assertEquals(japaneseDestination, new Uint8Array(encodedJapaneseCharacter));
+                const asciiDestination = new Uint8Array(1);
+                assertEquals(encoder.encodeInto("A", asciiDestination), { read: 1, written: 1 });
+                assertEquals(asciiDestination, new Uint8Array([ 0x41 ]));
+            });
+            it("starts encode calls with a fresh state after an error", () => {
+                const encoder = new TextEncoder("iso-2022-jp");
+                assertThrowWithMessage(() => encoder.encode("\u65E5💩"), TypeError, "The code point 128169 could not be encoded");
+                assertEquals(encoder.encode("\u65E5"), new Uint8Array(encodedJapaneseCharacter));
+            });
+        });
     });
     describe("encodes supersets of ASCII correctly:", () => {
         for (const encoding of ASCII_SUPERSETS) {

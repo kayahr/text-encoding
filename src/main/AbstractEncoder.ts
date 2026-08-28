@@ -6,10 +6,17 @@
 import type { ByteBuffer } from "./ByteBuffer.ts";
 import type { Encoder } from "./Encoder.ts";
 
+export const NO_TRAILING_BYTES: readonly number[] = [];
+
 /**
  * Base class for encoders.
  */
 export abstract class AbstractEncoder implements Encoder {
+    /** @inheritdoc */
+    public getTrailingBytes(): readonly number[] {
+        return NO_TRAILING_BYTES;
+    }
+
     /** @inheritdoc */
     public abstract encode(buffer: ByteBuffer): number | number[];
 
