@@ -10,6 +10,27 @@ import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
 import { indexOf, isASCII } from "../util.ts";
 
+const GB18030_2005_PUA_BYTES = new Map<number, readonly [number, number]>([
+    [ 0xE78D, [ 0xA6, 0xD9 ] ],
+    [ 0xE78E, [ 0xA6, 0xDA ] ],
+    [ 0xE78F, [ 0xA6, 0xDB ] ],
+    [ 0xE790, [ 0xA6, 0xDC ] ],
+    [ 0xE791, [ 0xA6, 0xDD ] ],
+    [ 0xE792, [ 0xA6, 0xDE ] ],
+    [ 0xE793, [ 0xA6, 0xDF ] ],
+    [ 0xE794, [ 0xA6, 0xEC ] ],
+    [ 0xE795, [ 0xA6, 0xED ] ],
+    [ 0xE796, [ 0xA6, 0xF3 ] ],
+    [ 0xE81E, [ 0xFE, 0x59 ] ],
+    [ 0xE826, [ 0xFE, 0x61 ] ],
+    [ 0xE82B, [ 0xFE, 0x66 ] ],
+    [ 0xE82C, [ 0xFE, 0x67 ] ],
+    [ 0xE832, [ 0xFE, 0x6D ] ],
+    [ 0xE843, [ 0xFE, 0x7E ] ],
+    [ 0xE854, [ 0xFE, 0x90 ] ],
+    [ 0xE864, [ 0xFE, 0xA0 ] ]
+]);
+
 /**
  * Returns the index for the given code point.
  *
@@ -61,6 +82,10 @@ export abstract class GBEncoder extends AbstractEncoder {
         }
         if (this.gbkFlag && codePoint === 0x20AC) {
             return 0x80;
+        }
+        const puaBytes = GB18030_2005_PUA_BYTES.get(codePoint);
+        if (puaBytes != null) {
+            return [ ...puaBytes ];
         }
         let index = indexOf(gb18030, codePoint);
         if (index !== null) {

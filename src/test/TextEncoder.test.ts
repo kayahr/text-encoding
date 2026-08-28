@@ -10,6 +10,7 @@ import { describe, it } from "node:test";
 import { TextEncoder } from "../main/TextEncoder.ts";
 import eucjp from "./data/euc-jp-decoded.ts";
 import euckr from "./data/euc-kr-decoded.ts";
+import gb18030PUAMappings from "./data/gb18030-pua-mappings.ts";
 import gbk from "./data/gbk-decoded.ts";
 import shiftJIS from "./data/shift_jis-decoded.ts";
 import { readData } from "./util/readData.ts";
@@ -160,6 +161,16 @@ describe("TextEncoder", () => {
         ];
         for (const test of tests) {
             assertEquals(new TextEncoder("gb18030").encode(test.decoded), new Uint8Array(test.encoded));
+        }
+    });
+    describe("encodes GB18030-2005 private-use compatibility mappings with", () => {
+        for (const encoding of [ "gbk", "gb18030" ]) {
+            it(encoding, () => {
+                const encoder = new TextEncoder(encoding);
+                for (const mapping of gb18030PUAMappings) {
+                    assertEquals(encoder.encode(String.fromCodePoint(mapping.legacy)), new Uint8Array(mapping.encoded));
+                }
+            });
         }
     });
     it("throws error when encoding U+E5E5 with gb18030", () => {

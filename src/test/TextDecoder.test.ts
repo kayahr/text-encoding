@@ -12,6 +12,7 @@ import { TextEncoder } from "../main/TextEncoder.ts";
 import big5 from "./data/big5-decoded.ts";
 import eucjp from "./data/euc-jp-decoded.ts";
 import euckr from "./data/euc-kr-decoded.ts";
+import gb18030PUAMappings from "./data/gb18030-pua-mappings.ts";
 import gbk from "./data/gbk-decoded.ts";
 import iso2022jp from "./data/iso-2022-jp-decoded.ts";
 import shiftJIS from "./data/shift_jis-decoded.ts";
@@ -382,6 +383,16 @@ describe("TextDecoder", () => {
     it("can decode gbk", async () => {
         const encoded = await readData("gbk-encoded.txt");
         assertSame(new TextDecoder("gbk").decode(encoded), gbk);
+    });
+    describe("decodes GB18030-2022 mappings with", () => {
+        for (const encoding of [ "gbk", "gb18030" ]) {
+            it(encoding, () => {
+                const decoder = new TextDecoder(encoding);
+                for (const mapping of gb18030PUAMappings) {
+                    assertSame(decoder.decode(new Uint8Array(mapping.encoded)), String.fromCodePoint(mapping.current));
+                }
+            });
+        }
     });
     it("can decode shift_jis", async () => {
         assertSame(new TextDecoder("shift_jis").decode(await readData("shift_jis-encoded.txt")), shiftJIS);
