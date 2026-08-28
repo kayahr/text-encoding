@@ -39,7 +39,9 @@ describe("TextEncoder", () => {
         const NativeTextEncoder = globalThis.TextEncoder;
 
         it("uses the native encoder for normalized UTF-8 labels", () => {
-            for (const label of [ "utf-8", "UTF-8", " utf-8 ", "utf8" ]) {
+            for (const label of [
+                "utf-8", "UTF-8", " utf-8 ", "utf8", "unicode-1-1-utf-8", "unicode11utf8", "unicode20utf8", "x-unicode20utf8"
+            ]) {
                 assertSame(createTextEncoder(label) instanceof NativeTextEncoder, true);
             }
         });
@@ -57,12 +59,21 @@ describe("TextEncoder", () => {
             }
         });
     });
-    it("accept encoding names case-insensitive", () => {
+    it("accepts encoding names case-insensitively", () => {
         const encodings = [
             { label: "utf-8", encoding: "utf-8" },
+            { label: "unicode11utf8", encoding: "utf-8" },
+            { label: "unicode20utf8", encoding: "utf-8" },
+            { label: "x-unicode20utf8", encoding: "utf-8" },
             { label: "utf-16", encoding: "utf-16le" },
             { label: "utf-16le", encoding: "utf-16le" },
+            { label: "csunicode", encoding: "utf-16le" },
+            { label: "iso-10646-ucs-2", encoding: "utf-16le" },
+            { label: "ucs-2", encoding: "utf-16le" },
+            { label: "unicode", encoding: "utf-16le" },
+            { label: "unicodefeff", encoding: "utf-16le" },
             { label: "utf-16be", encoding: "utf-16be" },
+            { label: "unicodefffe", encoding: "utf-16be" },
             { label: "ascii", encoding: "windows-1252" },
             { label: "iso8859-1", encoding: "windows-1252" },
             { label: "iso-8859-1", encoding: "windows-1252" }

@@ -11,8 +11,11 @@ registerEncoding(
     "utf-8",
     [
         "unicode-1-1-utf-8",
+        "unicode11utf8",
+        "unicode20utf8",
         "utf-8",
-        "utf8"
+        "utf8",
+        "x-unicode20utf8"
     ],
     UTF8Decoder,
     UTF8Encoder

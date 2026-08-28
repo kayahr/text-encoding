@@ -10,6 +10,7 @@ import { registerEncoding } from "../Encoding.ts";
 registerEncoding(
     "utf-16be",
     [
+        "unicodefffe",
         "utf-16be"
     ],
     UTF16BEDecoder,

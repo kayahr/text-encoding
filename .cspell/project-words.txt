@@ -15,6 +15,7 @@ cskoi
 csksc
 csmacintosh
 csshiftjis
+csunicode
 elot
 eucjp
 euckr
@@ -26,4 +27,6 @@ oxlint
 Reimer
 sjis
 SUPERSETS
+unicodefeff
+unicodefffe
 unrepresentable

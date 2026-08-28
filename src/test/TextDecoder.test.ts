@@ -140,12 +140,21 @@ describe("TextDecoder", () => {
             assertSame(decoder.decode(Uint8Array.of(0x41, 0x00)), "A");
         });
     });
-    it("accept encoding names case-insensitive", () => {
+    it("accepts encoding names case-insensitively", () => {
         const encodings = [
             { label: "utf-8", encoding: "utf-8" },
+            { label: "unicode11utf8", encoding: "utf-8" },
+            { label: "unicode20utf8", encoding: "utf-8" },
+            { label: "x-unicode20utf8", encoding: "utf-8" },
             { label: "utf-16", encoding: "utf-16le" },
             { label: "utf-16le", encoding: "utf-16le" },
+            { label: "csunicode", encoding: "utf-16le" },
+            { label: "iso-10646-ucs-2", encoding: "utf-16le" },
+            { label: "ucs-2", encoding: "utf-16le" },
+            { label: "unicode", encoding: "utf-16le" },
+            { label: "unicodefeff", encoding: "utf-16le" },
             { label: "utf-16be", encoding: "utf-16be" },
+            { label: "unicodefffe", encoding: "utf-16be" },
             { label: "ascii", encoding: "windows-1252" },
             { label: "iso8859-1", encoding: "windows-1252" },
             { label: "iso-8859-1", encoding: "windows-1252" }
