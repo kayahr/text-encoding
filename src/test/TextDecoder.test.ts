@@ -399,6 +399,9 @@ describe("TextDecoder", () => {
     it("throws RangeError for unsupported encoding iso-2022-kr:", () => {
         assertThrowWithMessage(() => new TextDecoder("iso-2022-kr"), RangeError, "Encoding not supported: iso-2022-kr");
     });
+    it("throws RangeError for unsupported encoding replacement:", () => {
+        assertThrowWithMessage(() => new TextDecoder("replacement"), RangeError, "Encoding not supported: replacement");
+    });
     it("throws RangeError for unsupported encoding klingon-1:", () => {
         assertThrowWithMessage(() => new TextDecoder("klingon-1"), RangeError, "Encoding not supported: klingon-1");
     });
