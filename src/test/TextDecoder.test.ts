@@ -34,7 +34,7 @@ const utfSample = "z\xA2\u6C34\uD834\uDD1E\uDBFF\uDFFD";
 const UTF8_ENCODING = [ "utf-8" ];
 const LEGACY_ENCODINGS = [
     "ibm866", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
-    "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
+    "iso-8859-8-i", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
     "windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254", "windows-1255",
     "windows-1256", "windows-1257", "windows-1258", "x-mac-cyrillic", "gbk", "gb18030", "big5", "euc-jp",
     "iso-2022-jp", "shift_jis", "euc-kr", "utf-16le", "utf-16be"
@@ -51,14 +51,13 @@ describe("TextDecoder", () => {
         describe("single-byte encoding", () => {
             const encodings = [
                 "ibm866", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
-                "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
+                "iso-8859-8-i", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
                 "windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254", "windows-1255",
                 "windows-1256", "windows-1257", "windows-1258", "x-mac-cyrillic", "x-user-defined"
             ];
             for (const encoding of encodings) {
                 it(encoding, () => assertEncodingLikeNode(encoding));
             }
-            it("iso-8859-8-i", () => assertEncodingLikeNode("iso-8859-8", "iso-8859-8-i"));
         });
         describe("multi-byte encoding", () => {
             for (const encoding of [ "gbk", "gb18030", "iso-2022-jp" ]) {
@@ -155,6 +154,9 @@ describe("TextDecoder", () => {
             { label: "unicodefeff", encoding: "utf-16le" },
             { label: "utf-16be", encoding: "utf-16be" },
             { label: "unicodefffe", encoding: "utf-16be" },
+            { label: "csiso88598i", encoding: "iso-8859-8-i" },
+            { label: "iso-8859-8-i", encoding: "iso-8859-8-i" },
+            { label: "logical", encoding: "iso-8859-8-i" },
             { label: "ascii", encoding: "windows-1252" },
             { label: "iso8859-1", encoding: "windows-1252" },
             { label: "iso-8859-1", encoding: "windows-1252" }
@@ -362,6 +364,7 @@ describe("TextDecoder", () => {
             { name: "iso-8859-6", encoding: "iso-8859-6", encoded: [ 0xA1 ], decoded: "\uFFFD" },
             { name: "iso-8859-7", encoding: "iso-8859-7", encoded: [ 0xAE ], decoded: "\uFFFD" },
             { name: "iso-8859-8", encoding: "iso-8859-8", encoded: [ 0xA1 ], decoded: "\uFFFD" },
+            { name: "iso-8859-8-i", encoding: "iso-8859-8-i", encoded: [ 0xA1 ], decoded: "\uFFFD" },
             { name: "windows-1253", encoding: "windows-1253", encoded: [ 0xAA ], decoded: "\uFFFD" },
             { name: "windows-1255", encoding: "windows-1255", encoded: [ 0xD9 ], decoded: "\uFFFD" },
             { name: "windows-1257", encoding: "windows-1257", encoded: [ 0xA1 ], decoded: "\uFFFD" },

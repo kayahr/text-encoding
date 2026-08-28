@@ -19,7 +19,7 @@ import { assertEquals, assertSame, assertThrowWithMessage } from "@kayahr/assert
 const UTF8_ENCODING = [ "utf-8" ];
 const SINGLE_BYTE_ENCODINGS = [
     "ibm866", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
-    "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
+    "iso-8859-8-i", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
     "windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254", "windows-1255",
     "windows-1256", "windows-1257", "windows-1258", "x-mac-cyrillic", "x-user-defined"
 ];
@@ -74,6 +74,9 @@ describe("TextEncoder", () => {
             { label: "unicodefeff", encoding: "utf-16le" },
             { label: "utf-16be", encoding: "utf-16be" },
             { label: "unicodefffe", encoding: "utf-16be" },
+            { label: "csiso88598i", encoding: "iso-8859-8-i" },
+            { label: "iso-8859-8-i", encoding: "iso-8859-8-i" },
+            { label: "logical", encoding: "iso-8859-8-i" },
             { label: "ascii", encoding: "windows-1252" },
             { label: "iso8859-1", encoding: "windows-1252" },
             { label: "iso-8859-1", encoding: "windows-1252" }
@@ -189,6 +192,9 @@ describe("TextEncoder", () => {
     });
     it("can encode regular Big5 characters", () => {
         assertEquals(new TextEncoder("big5").encode("\u4E00"), new Uint8Array([ 0xA4, 0x40 ]));
+    });
+    it("encodes ISO-8859-8-I with the ISO-8859-8 code page", () => {
+        assertEquals(new TextEncoder("iso-8859-8-i").encode("\u00D7\u05D0"), new Uint8Array([ 0xAA, 0xE0 ]));
     });
     describe("encodes compatibility mappings with", () => {
         it("EUC-JP", () => {

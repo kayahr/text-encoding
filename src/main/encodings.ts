@@ -23,6 +23,7 @@ import "./encodings/iso-8859-5.ts";
 import "./encodings/iso-8859-6.ts";
 import "./encodings/iso-8859-7.ts";
 import "./encodings/iso-8859-8.ts";
+import "./encodings/iso-8859-8-i.ts";
 import "./encodings/iso-8859-10.ts";
 import "./encodings/iso-8859-13.ts";
 import "./encodings/iso-8859-14.ts";

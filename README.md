@@ -90,6 +90,7 @@ All listed encodings are supported for both encoding and decoding. Encoding labe
 | iso-8859-6     | arabic, asmo-708, csiso88596e, csiso88596i, csisolatinarabic, ecma-114, iso-8859-6-e, iso-8859-6-i, iso-ir-127, iso8859-6, iso88596, iso_8859-6, iso_8859-6:1987
 | iso-8859-7     | csisolatingreek, ecma-118, elot_928, greek, greek8, iso-ir-126, iso8859-7, iso88597, iso_8859-7, iso_8859-7:1987, sun_eu_greek
 | iso-8859-8     | csiso88598e, csisolatinhebrew, hebrew, iso-8859-8-e, iso-ir-138, iso8859-8, iso88598, iso_8859-8, iso_8859-8:1988, visual
+| iso-8859-8-i   | csiso88598i, logical
 | iso-8859-10    | csisolatin6, iso-ir-157, iso8859-10, iso885910, l6, latin6
 | iso-8859-13    | iso8859-13, iso885913
 | iso-8859-14    | iso8859-14, iso885914
