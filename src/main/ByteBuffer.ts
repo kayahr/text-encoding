@@ -7,11 +7,17 @@
 export const END_OF_BUFFER = -1;
 
 /**
- * A buffer backed by by a dynamic byte array. Bytes can be read to or written from the buffer.
+ * A byte buffer which allows bytes to be read and restored.
  */
 export class ByteBuffer {
-    /** The bytes in the buffer. */
-    private readonly bytes: number[];
+    /** The input bytes. */
+    private readonly bytes: readonly number[] | Uint8Array;
+
+    /** Current position in the input bytes. */
+    private position = 0;
+
+    /** Bytes which have been written back to the buffer. */
+    private readonly restoredBytes: number[] = [];
 
     /**
      * Creates a new byte buffer backed by the given byte array.
@@ -19,8 +25,7 @@ export class ByteBuffer {
      * @param bytes - Array of initial bytes in the buffer.
      */
     public constructor(bytes: number[] | Uint8Array) {
-        // Reversed as push/pop is more efficient than shift/unshift
-        this.bytes = Array.from(bytes).reverse();
+        this.bytes = bytes;
     }
 
     /**
@@ -29,7 +34,7 @@ export class ByteBuffer {
      * @returns True if end of buffer, false if not.
      */
     public isEndOfBuffer(): boolean {
-        return this.bytes.length === 0;
+        return this.position >= this.bytes.length && this.restoredBytes.length === 0;
     }
 
     /**
@@ -39,7 +44,7 @@ export class ByteBuffer {
      * @returns The read byte or END_OF_BUFFER when no more bytes to read.
      */
     public read(): number {
-        return this.bytes.pop() ?? END_OF_BUFFER;
+        return this.restoredBytes.pop() ?? this.bytes[this.position++] ?? END_OF_BUFFER;
     }
 
     /**
@@ -48,6 +53,6 @@ export class ByteBuffer {
      * @param bytes - The bytes to write.
      */
     public write(...bytes: number[]): void {
-        this.bytes.push(...bytes);
+        this.restoredBytes.push(...bytes);
     }
 }
