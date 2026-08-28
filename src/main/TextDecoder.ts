@@ -62,21 +62,12 @@ export class TextDecoder implements globalThis.TextDecoder {
             this.seenBOM = false;
         }
 
-        // Decode the input bytes
-        const inputStream = new ByteBuffer(bytes);
-        let output = "";
-        let result: number | number[] | null;
-        while (!inputStream.isEndOfBuffer()) {
-            result = this.decoder.decode(inputStream);
-            if (result === FINISHED) {
-                break;
-            }
-            if (result != null) {
-                output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
-            }
-        }
-        if (!stream) {
-            do {
+        try {
+            // Decode the input bytes
+            const inputStream = new ByteBuffer(bytes);
+            let output = "";
+            let result: number | number[] | null;
+            while (!inputStream.isEndOfBuffer()) {
                 result = this.decoder.decode(inputStream);
                 if (result === FINISHED) {
                     break;
@@ -84,20 +75,34 @@ export class TextDecoder implements globalThis.TextDecoder {
                 if (result != null) {
                     output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
                 }
-            } while (!inputStream.isEndOfBuffer());
-            this.decoder = null;
-        }
+            }
+            if (!stream) {
+                do {
+                    result = this.decoder.decode(inputStream);
+                    if (result === FINISHED) {
+                        break;
+                    }
+                    if (result != null) {
+                        output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
+                    }
+                } while (!inputStream.isEndOfBuffer());
+            }
 
-        // Remove BOM header from output if ignoreBOM flag is not set
-        if ([ "utf-8", "utf-16le", "utf-16be" ].includes(this.encoding) && !this.ignoreBOM && !this.seenBOM) {
-            if (output.length > 0) {
-                this.seenBOM = true;
-                if (output[0] === "\uFEFF") {
-                    return output.substring(1);
+            // Remove BOM header from output if ignoreBOM flag is not set
+            if ([ "utf-8", "utf-16le", "utf-16be" ].includes(this.encoding) && !this.ignoreBOM && !this.seenBOM) {
+                if (output.length > 0) {
+                    this.seenBOM = true;
+                    if (output[0] === "\uFEFF") {
+                        output = output.substring(1);
+                    }
                 }
             }
-        }
 
-        return output;
+            return output;
+        } finally {
+            if (!stream) {
+                this.decoder = null;
+            }
+        }
     }
 }

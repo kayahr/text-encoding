@@ -126,6 +126,19 @@ describe("TextDecoder", () => {
             assertThrow(() => new TextDecoder(badInput.encoding, { fatal: true }).decode(encoded));
         }
     });
+    describe("resets state after fatal errors", () => {
+        it("after a non-streaming decode", () => {
+            const decoder = new TextDecoder("utf-16le", { fatal: true });
+            assertThrowWithMessage(() => decoder.decode(Uint8Array.of(0x00)), TypeError, "Decoder error");
+            assertSame(decoder.decode(Uint8Array.of(0x41, 0x00)), "A");
+        });
+        it("when ending a streamed decode", () => {
+            const decoder = new TextDecoder("utf-16le", { fatal: true });
+            assertSame(decoder.decode(Uint8Array.of(0x00), { stream: true }), "");
+            assertThrowWithMessage(() => decoder.decode(), TypeError, "Decoder error");
+            assertSame(decoder.decode(Uint8Array.of(0x41, 0x00)), "A");
+        });
+    });
     it("accept encoding names case-insensitive", () => {
         const encodings = [
             { label: "utf-8", encoding: "utf-8" },
