@@ -15,6 +15,7 @@ import euckr from "./data/euc-kr-decoded.ts";
 import gbk from "./data/gbk-decoded.ts";
 import iso2022jp from "./data/iso-2022-jp-decoded.ts";
 import shiftJIS from "./data/shift_jis-decoded.ts";
+import { assertEncodingLikeNode } from "./util/nodeTextDecoder.ts";
 import { readData } from "./util/readData.ts";
 
 const utf8BOM = [ 0xEF, 0xBB, 0xBF ];
@@ -40,6 +41,39 @@ const LEGACY_ENCODINGS = [
 const ASCII_SUPERSETS = UTF8_ENCODING.concat(LEGACY_ENCODINGS).filter(e => e !== "utf-16le" && e !== "utf-16be");
 
 describe("TextDecoder", () => {
+    describe("matches Node.js", () => {
+        describe("Unicode encoding", () => {
+            for (const encoding of [ "utf-8", "utf-16le", "utf-16be" ]) {
+                it(encoding, () => assertEncodingLikeNode(encoding));
+            }
+        });
+        describe("single-byte encoding", () => {
+            const encodings = [
+                "ibm866", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
+                "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "iso-8859-16", "koi8-r", "koi8-u", "macintosh",
+                "windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254", "windows-1255",
+                "windows-1256", "windows-1257", "windows-1258", "x-mac-cyrillic", "x-user-defined"
+            ];
+            for (const encoding of encodings) {
+                it(encoding, () => assertEncodingLikeNode(encoding));
+            }
+            it("iso-8859-8-i", () => assertEncodingLikeNode("iso-8859-8", "iso-8859-8-i"));
+        });
+        describe("multi-byte encoding", () => {
+            for (const encoding of [ "gbk", "gb18030", "iso-2022-jp" ]) {
+                it(encoding, () => assertEncodingLikeNode(encoding));
+            }
+
+            // Node.js TextDecoder is known to return incorrect results for these encodings:
+            // https://github.com/nodejs/node/issues/61041
+            /*
+            it("big5", () => assertEncodingLikeNode("big5"));
+            it("euc-jp", () => assertEncodingLikeNode("euc-jp"));
+            it("euc-kr", () => assertEncodingLikeNode("euc-kr"));
+            it("shift_jis", () => assertEncodingLikeNode("shift_jis"));
+            */
+        });
+    });
     it("defaults to utf-8 encoding", () => {
         assertSame(new TextDecoder().encoding, "utf-8");
     });
