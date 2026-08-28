@@ -41,7 +41,7 @@ export class Big5Decoder extends AbstractDecoder {
                 case null:
                 default:
             }
-            const codePoint = (index == null) ? null : big5[index] ?? null;
+            const codePoint = (index == null) ? null : big5[index] || null;
             if (codePoint == null && isASCII(byte)) {
                 buffer.write(byte);
             }

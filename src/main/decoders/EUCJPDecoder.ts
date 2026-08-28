@@ -41,7 +41,7 @@ export class EUCJPDecoder extends AbstractDecoder {
             this.lead = 0x00;
             let codePoint: number | null = null;
             if (inRange(lead, 0xA1, 0xFE) && inRange(byte, 0xA1, 0xFE)) {
-                codePoint = (this.jis0212Flag ? jis0212 : jis0208)[(lead - 0xA1) * 94 + (byte - 0xA1)] ?? null;
+                codePoint = (this.jis0212Flag ? jis0212 : jis0208)[(lead - 0xA1) * 94 + (byte - 0xA1)] || null;
             }
             this.jis0212Flag = false;
             if (!inRange(byte, 0xA1, 0xFE)) {

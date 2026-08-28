@@ -32,8 +32,8 @@ export class EUCKRDecoder extends AbstractDecoder {
             if (inRange(byte, 0x41, 0xFE)) {
                 index = (lead - 0x81) * 190 + (byte - 0x41);
             }
-            const codePoint = (index == null) ? null : euckr[index] ?? null;
-            if (index == null && isASCII(byte)) {
+            const codePoint = (index == null) ? null : euckr[index] || null;
+            if (codePoint == null && isASCII(byte)) {
                 buffer.write(byte);
             }
             return codePoint ?? this.fail();

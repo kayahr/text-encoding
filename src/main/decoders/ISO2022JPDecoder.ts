@@ -96,7 +96,7 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                 if (inRange(byte, 0x21, 0x7E)) {
                     this.state = State.LeadByte;
                     const index = (this.lead - 0x21) * 94 + byte - 0x21;
-                    const codePoint = jis0208[index] ?? null;
+                    const codePoint = jis0208[index] || null;
                     if (codePoint == null) {
                         return this.fail();
                     }

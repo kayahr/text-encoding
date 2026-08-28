@@ -100,7 +100,7 @@ export class GBDecoder extends AbstractDecoder {
             if (inRange(byte, 0x40, 0x7E) || inRange(byte, 0x80, 0xFE)) {
                 index = (lead - 0x81) * 190 + (byte - offset);
             }
-            codePoint = index == null ? null : gb18030[index] ?? null;
+            codePoint = index == null ? null : gb18030[index] || null;
             if (codePoint == null && isASCII(byte)) {
                 buffer.write(byte);
             }

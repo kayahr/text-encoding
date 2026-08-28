@@ -215,6 +215,31 @@ describe("TextDecoder", () => {
         assertThrowWithMessage(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ])), TypeError, "Decoder error");
         assertSame(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
     });
+    describe("handles unmapped table entries", () => {
+        const tests = [
+            { name: "iso-8859-3", encoding: "iso-8859-3", encoded: [ 0xA5 ], decoded: "\uFFFD" },
+            { name: "iso-8859-6", encoding: "iso-8859-6", encoded: [ 0xA1 ], decoded: "\uFFFD" },
+            { name: "iso-8859-7", encoding: "iso-8859-7", encoded: [ 0xAE ], decoded: "\uFFFD" },
+            { name: "iso-8859-8", encoding: "iso-8859-8", encoded: [ 0xA1 ], decoded: "\uFFFD" },
+            { name: "windows-1253", encoding: "windows-1253", encoded: [ 0xAA ], decoded: "\uFFFD" },
+            { name: "windows-1255", encoding: "windows-1255", encoded: [ 0xD9 ], decoded: "\uFFFD" },
+            { name: "windows-1257", encoding: "windows-1257", encoded: [ 0xA1 ], decoded: "\uFFFD" },
+            { name: "windows-874", encoding: "windows-874", encoded: [ 0xDB ], decoded: "\uFFFD" },
+            { name: "Big5", encoding: "big5", encoded: [ 0x81, 0x40 ], decoded: "\uFFFD@" },
+            { name: "EUC-KR", encoding: "euc-kr", encoded: [ 0x81, 0x5B ], decoded: "\uFFFD[" },
+            { name: "EUC-JP JIS0208", encoding: "euc-jp", encoded: [ 0xA2, 0xAF ], decoded: "\uFFFD" },
+            { name: "EUC-JP JIS0212", encoding: "euc-jp", encoded: [ 0x8F, 0xA1, 0xA1 ], decoded: "\uFFFD" },
+            { name: "Shift_JIS", encoding: "shift_jis", encoded: [ 0x81, 0xAD ], decoded: "\uFFFD" },
+            { name: "ISO-2022-JP", encoding: "iso-2022-jp", encoded: [ 0x1B, 0x24, 0x42, 0x22, 0x2F ], decoded: "\uFFFD" }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                const encoded = new Uint8Array(test.encoded);
+                assertSame(new TextDecoder(test.encoding).decode(encoded), test.decoded);
+                assertThrowWithMessage(() => new TextDecoder(test.encoding, { fatal: true }).decode(encoded), TypeError, "Decoder error");
+            });
+        }
+    });
     it("throws RangeError for unsupported encoding csiso2022kr:", () => {
         assertThrowWithMessage(() => new TextDecoder("csiso2022kr"), RangeError, "Encoding not supported: csiso2022kr");
     });

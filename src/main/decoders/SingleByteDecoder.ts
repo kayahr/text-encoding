@@ -50,6 +50,6 @@ export class SingleByteDecoder extends AbstractDecoder {
         if (isASCII(byte)) {
             return byte;
         }
-        return this.index[byte - 0x80] ?? this.fail();
+        return this.index[byte - 0x80] || this.fail();
     }
 }

@@ -39,7 +39,7 @@ export class ShiftJISDecoder extends AbstractDecoder {
             if (inRange(index, 8836, 10715)) {
                 return 0xE000 - 8836 + index;
             }
-            const codePoint = (index == null) ? null : jis0208[index] ?? null;
+            const codePoint = (index == null) ? null : jis0208[index] || null;
             if (codePoint == null && isASCII(byte)) {
                 buffer.write(byte);
             }
