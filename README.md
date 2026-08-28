@@ -1,14 +1,18 @@
 Text Encoding
 =============
 
-[GitHub] | [NPM] | [API Doc]
+[GitHub] | [npm] | [API documentation]
 
-This project is a heavily refactored clone of an old abandoned [text-encoding](https://github.com/inexorabletash/text-encoding/) library with the following changes:
+This project is a heavily refactored fork of the archived [text-encoding](https://github.com/inexorabletash/text-encoding/) library with the following changes:
 
-* Refactored into a modern TypeScript project.
-* Separated the monolithic script into many logical modules.
-* Each encoding is a separate module and can be loaded individually if needed.
-* No longer a polyfill for the [Encoding API](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API) but a API compatible replacement with advanced features like encoding support for not just UTF-8.
+* Refactored into a modern, modular TypeScript project with separately loadable encodings.
+* Corrected mapping tables and malformed-input recovery across multi-byte encodings.
+* Fixed reusable encoder and decoder state after errors.
+* Added support for modern `BufferSource` inputs, including `SharedArrayBuffer`.
+* Improved lookup and large-input performance.
+* Expanded exhaustive regression and conformance testing.
+
+The library provides importable `TextEncoder` and `TextDecoder` implementations without modifying the corresponding global objects. Unlike the native `TextEncoder`, it can encode all supported encodings, not only UTF-8.
 
 Usage
 -----
@@ -19,46 +23,52 @@ Install the library as a dependency in your project:
 npm install @kayahr/text-encoding
 ```
 
-And then use it like this:
+Then use it as follows:
 
 ```typescript
 import { TextEncoder, TextDecoder } from "@kayahr/text-encoding";
 
+const input = "中文";
 const encoder = new TextEncoder("big5");
-const encoded = encoder.encode(string);
+const encoded = encoder.encode(input);
 
 const decoder = new TextDecoder("big5");
 const decoded = decoder.decode(encoded);
 ```
 
-When importing the module from `@kayahr/text-encoding` then all provided encodings are loaded automatically. If you want to keep your application as small as possible then you can import the module like this instead:
+Importing `@kayahr/text-encoding` automatically registers all supported encodings. To keep your application as small as possible, use the UTF-8-only entry point instead:
 
 ```typescript
 import { TextEncoder } from "@kayahr/text-encoding/no-encodings";
 ```
 
-When doing this then no encodings are loaded and only UTF-8 is supported. When you later need a specific encoding then use imports like this:
+This entry point registers only UTF-8. To add a specific encoding, import its module:
 
 ```typescript
+import { TextEncoder } from "@kayahr/text-encoding/no-encodings";
 import "@kayahr/text-encoding/encodings/shift_jis";
+
+const encoder = new TextEncoder("shift_jis");
 ```
 
-Or import all encodings:
+To register all encodings instead:
 
 ```typescript
 import "@kayahr/text-encoding/encodings";
 ```
 
-There is also a helper function for creating a text encoder which returns an implementation of the original TextEncoder (if present), when encoding is UTF-8 and an implementation of the custom TextEncoder from this library when encoding is not UTF-8:
+The `createTextEncoder` helper uses the native `TextEncoder` for UTF-8 when available and this library's implementation for all other encodings:
 
 ```typescript
 import { createTextEncoder } from "@kayahr/text-encoding";
 
-const encoder = createTextEncoder(encoding);
+const encoder = createTextEncoder("big5");
 ```
 
 Supported encodings
 -------------------
+
+All listed encodings are supported for both encoding and decoding. Encoding labels are matched case-insensitively and surrounding whitespace is ignored.
 
 | Encoding       | Aliases
 |----------------|-----------------------------------------------------------------------------------------------------
@@ -70,9 +80,9 @@ Supported encodings
 | ibm866         | 866, cp866, csibm866
 | iso-2022-jp    | csiso2022jp
 | shift_jis      | csshiftjis, ms932, ms_kanji, shift-jis, sjis, windows-31j, x-sjis
-| utf-8          | unicode-1-1-utf-8, utf8
-| utf-16le       | utf-16
-| utf-16be       |
+| utf-8          | unicode-1-1-utf-8, unicode11utf8, unicode20utf8, utf8, x-unicode20utf8
+| utf-16le       | csunicode, iso-10646-ucs-2, ucs-2, unicode, unicodefeff, utf-16
+| utf-16be       | unicodefffe
 | iso-8859-2     | csisolatin2, iso-ir-101, iso8859-2, iso88592, iso_8859-2, iso_8859-2:1987, l2, latin2
 | iso-8859-3     | csisolatin3, iso-ir-109, iso8859-3, iso88593, iso_8859-3, iso_8859-3:1988, l3, latin3
 | iso-8859-4     | csisolatin4, iso-ir-110, iso8859-4, iso88594, iso_8859-4, iso_8859-4:1988, l4, latin4
@@ -99,7 +109,8 @@ Supported encodings
 | windows-1257   | cp1257, x-cp1257
 | windows-1258   | cp1258, x-cp1258
 | x-mac-cyrillic | x-mac-ukrainian
+| x-user-defined |
 
-[API Doc]: https://kayahr.github.io/text-encoding/
+[API documentation]: https://kayahr.github.io/text-encoding/
 [GitHub]: https://github.com/kayahr/text-encoding
-[NPM]: https://www.npmjs.com/package/@kayahr/text-encoding
+[npm]: https://www.npmjs.com/package/@kayahr/text-encoding
