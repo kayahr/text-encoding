@@ -20,20 +20,25 @@ function getCodePoint(index: number): number | null {
     if ((index > 39419 && index < 189000) || (index > 1237575)) {
         return null;
     }
+    if (index >= 189000) {
+        return 0x10000 + index - 189000;
+    }
     if (index === 7457) {
         return 0xE7C7;
     }
-    let offset = 0;
-    let codePointOffset = 0;
-    const idx = gb18030ranges;
-    for (const entry of idx) {
-        if (entry[0] > index) {
-            break;
+
+    let lower = 0;
+    let upper = gb18030ranges.length - 1;
+    while (lower < upper) {
+        const middle = Math.ceil((lower + upper) / 2);
+        if (gb18030ranges[middle][0] <= index) {
+            lower = middle;
+        } else {
+            upper = middle - 1;
         }
-        offset = entry[0];
-        codePointOffset = entry[1];
     }
-    return codePointOffset + index - offset;
+    const [ pointerOffset, codePointOffset ] = gb18030ranges[lower];
+    return codePointOffset + index - pointerOffset;
 }
 
 /**
