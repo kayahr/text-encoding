@@ -3,9 +3,9 @@
     "tasks": [
         {
             "label": "Compile and watch project",
-            "type": "typescript",
-            "tsconfig": "tsconfig.json",
-            "option": "watch",
+            "type": "shell",
+            "command": "npm run build:compile -- --watch",
+            "isBackground": true,
             "problemMatcher": [
                 "$tsc-watch"
             ],

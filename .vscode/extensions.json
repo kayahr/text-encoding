@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "TypeScriptTeam.native-preview",
+        "connor4312.nodejs-testing",
+        "streetsidesoftware.code-spell-checker",
+        "oxc.oxc-vscode",
+        "editorconfig.editorconfig"
+    ]
+}
