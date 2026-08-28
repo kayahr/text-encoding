@@ -48,7 +48,8 @@ export class TextDecoder implements globalThis.TextDecoder {
      */
     public decode(input?: BufferSource | ArrayBufferLike | ArrayBufferView, { stream = false }: TextDecodeOptions = {}): string {
         let bytes;
-        if (input instanceof ArrayBuffer) {
+        if (input instanceof ArrayBuffer
+                || (typeof SharedArrayBuffer === "function" && input instanceof SharedArrayBuffer)) {
             bytes = new Uint8Array(input);
         } else if (ArrayBuffer.isView(input)) {
             bytes = new Uint8Array(input.buffer, input.byteOffset, input.byteLength);

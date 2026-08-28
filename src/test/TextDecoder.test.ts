@@ -304,6 +304,11 @@ describe("TextDecoder", () => {
         const chars = "ABabcdefghCDEFGH";
         assertSame(new TextDecoder().decode(new Uint8Array(bytes).buffer), chars);
     });
+    it("can decode from a shared array buffer", () => {
+        const buffer = new SharedArrayBuffer(1);
+        new Uint8Array(buffer)[0] = 0x41;
+        assertSame(new TextDecoder().decode(buffer), "A");
+    });
     describe("can decode from any typed array with and without buffer offsets:", () => {
         const bytes = [ 65, 66, 97, 98, 99, 100, 101, 102, 103, 104, 67, 68, 69, 70, 71, 72 ];
         const chars = "ABabcdefghCDEFGH";
