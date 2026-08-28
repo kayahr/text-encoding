@@ -3,11 +3,12 @@
  * See LICENSE.md for licensing information.
  */
 
+import iso2022jpKatakana from "../../../data/iso-2022-jp-katakana.cp.js";
 import jis0208 from "../../../data/jis0208.cp.js";
 import { AbstractEncoder } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
-import { indexOf, isASCII } from "../util.ts";
+import { inRange, indexOf, isASCII } from "../util.ts";
 
 type State = typeof State[keyof typeof State];
 const State = {
@@ -64,6 +65,9 @@ export class ISO2022JPEncoder extends AbstractEncoder {
         }
         if (codePoint === 0x2212) {
             codePoint = 0xFF0D;
+        }
+        if (inRange(codePoint, 0xFF61, 0xFF9F)) {
+            codePoint = iso2022jpKatakana[codePoint - 0xFF61];
         }
         const index = indexOf(jis0208, codePoint);
         if (index == null) {

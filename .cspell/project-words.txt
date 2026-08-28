@@ -18,6 +18,7 @@ csshiftjis
 elot
 eucjp
 euckr
+halfwidth
 HKSCs
 kayahr
 ntest

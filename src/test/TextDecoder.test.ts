@@ -230,6 +230,19 @@ describe("TextDecoder", () => {
             });
         }
     });
+    describe("preserves ISO-2022-JP output state during error recovery", () => {
+        const tests = [
+            { name: "Roman", encoded: [ 0x1B, 0x28, 0x4A, 0x1B, 0x5C ], decoded: "\uFFFD\u00A5" },
+            { name: "Katakana", encoded: [ 0x1B, 0x28, 0x49, 0x1B, 0x21 ], decoded: "\uFFFD\uFF61" },
+            { name: "JIS0208", encoded: [ 0x1B, 0x24, 0x42, 0x1B, 0x21, 0x21 ], decoded: "\uFFFD\u3000" },
+            { name: "truncated escape", encoded: [ 0x1B, 0x28 ], decoded: "\uFFFD(" }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                assertSame(new TextDecoder("iso-2022-jp").decode(new Uint8Array(test.encoded)), test.decoded);
+            });
+        }
+    });
     describe("handles unmapped table entries", () => {
         const tests = [
             { name: "iso-8859-3", encoding: "iso-8859-3", encoded: [ 0xA5 ], decoded: "\uFFFD" },

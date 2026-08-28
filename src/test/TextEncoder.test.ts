@@ -163,4 +163,9 @@ describe("TextEncoder", () => {
     it("throws error when encoding U+00A5,U000E with iso-2022-jp", () => {
         assertThrowWithMessage(() => new TextEncoder("iso-2022-jp").encode("\u00A5\u000E"), TypeError, "The code point 65533 could not be encoded");
     });
+    it("maps halfwidth Katakana when encoding iso-2022-jp", () => {
+        assertEquals(new TextEncoder("iso-2022-jp").encode("\uFF61\uFF76\uFF9E\uFF9F"), new Uint8Array([
+            0x1B, 0x24, 0x42, 0x21, 0x23, 0x25, 0x2B, 0x21, 0x2B, 0x21, 0x2C, 0x1B, 0x28, 0x42
+        ]));
+    });
 });

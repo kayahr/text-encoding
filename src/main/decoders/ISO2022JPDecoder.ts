@@ -25,6 +25,7 @@ const State = {
  */
 export class ISO2022JPDecoder extends AbstractDecoder {
     private state: State = State.ASCII;
+    private outputState: State = State.ASCII;
     private lead = 0x00;
     private outputFlag = false;
 
@@ -104,7 +105,6 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                 }
                 if (byte === END_OF_BUFFER) {
                     this.state = State.LeadByte;
-                    buffer.write(byte);
                     return this.fail();
                 }
                 this.state = State.LeadByte;
@@ -116,9 +116,11 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                     this.state = State.Escape;
                     return null;
                 }
-                buffer.write(byte);
+                if (byte !== END_OF_BUFFER) {
+                    buffer.write(byte);
+                }
                 this.outputFlag = false;
-                this.state = State.ASCII;
+                this.state = this.outputState;
                 return this.fail();
 
             case State.Escape: {
@@ -138,14 +140,19 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                     state = State.LeadByte;
                 }
                 if (state !== null) {
-                    this.state = this.state = state;
+                    this.state = state;
+                    this.outputState = state;
                     const outputFlag = this.outputFlag;
                     this.outputFlag = true;
                     return !outputFlag ? null : this.fail();
                 }
-                buffer.write(lead, byte);
+                if (byte === END_OF_BUFFER) {
+                    buffer.write(lead);
+                } else {
+                    buffer.write(lead, byte);
+                }
                 this.outputFlag = false;
-                this.state = State.ASCII;
+                this.state = this.outputState;
                 return this.fail();
             }
 
