@@ -7,7 +7,7 @@ import "../main/encodings.ts";
 
 import { describe, it } from "node:test";
 
-import { TextEncoder } from "../main/TextEncoder.ts";
+import { TextEncoder, createTextEncoder } from "../main/TextEncoder.ts";
 import eucjp from "./data/euc-jp-decoded.ts";
 import euckr from "./data/euc-kr-decoded.ts";
 import gb18030PUAMappings from "./data/gb18030-pua-mappings.ts";
@@ -34,6 +34,28 @@ describe("TextEncoder", () => {
     });
     it("accepts encoding argument", () => {
         assertSame(new TextEncoder("utf-16le").encoding, "utf-16le");
+    });
+    describe("createTextEncoder", () => {
+        const NativeTextEncoder = globalThis.TextEncoder;
+
+        it("uses the native encoder for normalized UTF-8 labels", () => {
+            for (const label of [ "utf-8", "UTF-8", " utf-8 ", "utf8" ]) {
+                assertSame(createTextEncoder(label) instanceof NativeTextEncoder, true);
+            }
+        });
+        it("uses the library encoder for legacy encodings", () => {
+            const encoder = createTextEncoder("windows-1252");
+            assertSame(encoder instanceof TextEncoder, true);
+            assertSame(encoder.encoding, "windows-1252");
+        });
+        it("uses the library encoder when no native encoder exists", () => {
+            try {
+                Object.defineProperty(globalThis, "TextEncoder", { configurable: true, value: undefined });
+                assertSame(createTextEncoder() instanceof TextEncoder, true);
+            } finally {
+                Object.defineProperty(globalThis, "TextEncoder", { configurable: true, value: NativeTextEncoder, writable: true });
+            }
+        });
     });
     it("accept encoding names case-insensitive", () => {
         const encodings = [
@@ -153,6 +175,43 @@ describe("TextEncoder", () => {
     it("can encode big5", () => {
         assertEquals(Array.from(new TextEncoder("big5").encode("\u2550\u255E\u2561\u256A\u5341\u5345")),
             [ 249, 249, 249, 233, 249, 235, 249, 234, 164, 81, 164, 202 ]);
+    });
+    it("can encode regular Big5 characters", () => {
+        assertEquals(new TextEncoder("big5").encode("\u4E00"), new Uint8Array([ 0xA4, 0x40 ]));
+    });
+    describe("encodes compatibility mappings with", () => {
+        it("EUC-JP", () => {
+            assertEquals(new TextEncoder("euc-jp").encode("\u00A5\u203E\uFF61\u2212"),
+                new Uint8Array([ 0x5C, 0x7E, 0x8E, 0xA1, 0xA1, 0xDD ]));
+        });
+        it("Shift_JIS", () => {
+            assertEquals(new TextEncoder("shift_jis").encode("\u00A5\u203E\uFF61\u2212"),
+                new Uint8Array([ 0x5C, 0x7E, 0xA1, 0x81, 0x7C ]));
+        });
+        it("ISO-2022-JP", () => {
+            assertEquals(new TextEncoder("iso-2022-jp").encode("\u00A5A\u203E"),
+                new Uint8Array([ 0x1B, 0x28, 0x4A, 0x5C, 0x41, 0x7E, 0x1B, 0x28, 0x42 ]));
+            assertEquals(new TextEncoder("iso-2022-jp").encode("\u00A5\\\u00A5~"), new Uint8Array([
+                0x1B, 0x28, 0x4A, 0x5C, 0x1B, 0x28, 0x42, 0x5C,
+                0x1B, 0x28, 0x4A, 0x5C, 0x1B, 0x28, 0x42, 0x7E
+            ]));
+            assertEquals(new TextEncoder("iso-2022-jp").encode("\u2212"),
+                new Uint8Array([ 0x1B, 0x24, 0x42, 0x21, 0x5D, 0x1B, 0x28, 0x42 ]));
+        });
+    });
+    it("can encode the GBK Euro extension", () => {
+        assertEquals(new TextEncoder("gbk").encode("\u20AC"), new Uint8Array([ 0x80 ]));
+    });
+    it("can encode the first GB18030 range entry", () => {
+        assertEquals(new TextEncoder("gb18030").encode("\u0080"), new Uint8Array([ 0x81, 0x30, 0x81, 0x30 ]));
+    });
+    describe("rejects unrepresentable characters with", () => {
+        for (const encoding of [ "big5", "euc-jp", "euc-kr", "gbk", "windows-1252", "x-user-defined" ]) {
+            it(encoding, () => {
+                assertThrowWithMessage(() => new TextEncoder(encoding).encode("💩"), TypeError,
+                    "The code point 128169 could not be encoded");
+            });
+        }
     });
     it("can encode gb18030", () => {
         const tests = [

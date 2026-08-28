@@ -52,10 +52,10 @@ export class GBDecoder extends AbstractDecoder {
     /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
-        if (byte === END_OF_BUFFER && this.first === 0x00 && this.second === 0x00 && this.third === 0x00) {
-            return FINISHED;
-        }
-        if (byte === END_OF_BUFFER && (this.first !== 0x00 || this.second !== 0x00 || this.third !== 0x00)) {
+        if (byte === END_OF_BUFFER) {
+            if (this.first === 0x00) {
+                return FINISHED;
+            }
             this.first = 0x00;
             this.second = 0x00;
             this.third = 0x00;
@@ -63,20 +63,20 @@ export class GBDecoder extends AbstractDecoder {
         }
         let codePoint: number | null;
         if (this.third !== 0x00) {
-            codePoint = null;
-            if (inRange(byte, 0x30, 0x39)) {
-                codePoint = getCodePoint((((this.first - 0x81) * 10 + this.second - 0x30) * 126 + this.third - 0x81)
-                    * 10 + byte - 0x30);
-            }
-            const bytes = [ this.second, this.third, byte ];
-            this.first = 0x00;
-            this.second = 0x00;
-            this.third = 0x00;
-            if (codePoint == null) {
+            if (!inRange(byte, 0x30, 0x39)) {
+                const bytes = [ this.second, this.third, byte ];
+                this.first = 0x00;
+                this.second = 0x00;
+                this.third = 0x00;
                 buffer.write(...bytes);
                 return this.fail();
             }
-            return codePoint;
+            codePoint = getCodePoint((((this.first - 0x81) * 10 + this.second - 0x30) * 126 + this.third - 0x81)
+                * 10 + byte - 0x30);
+            this.first = 0x00;
+            this.second = 0x00;
+            this.third = 0x00;
+            return codePoint ?? this.fail();
         }
         if (this.second !== 0x00) {
             if (inRange(byte, 0x81, 0xFE)) {
@@ -100,7 +100,7 @@ export class GBDecoder extends AbstractDecoder {
             if (inRange(byte, 0x40, 0x7E) || inRange(byte, 0x80, 0xFE)) {
                 index = (lead - 0x81) * 190 + (byte - offset);
             }
-            codePoint = index == null ? null : gb18030[index] || null;
+            codePoint = index == null ? null : gb18030[index];
             if (codePoint == null && isASCII(byte)) {
                 buffer.write(byte);
             }

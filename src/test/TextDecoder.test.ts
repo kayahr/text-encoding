@@ -229,6 +229,96 @@ describe("TextDecoder", () => {
         assertThrowWithMessage(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ])), TypeError, "Decoder error");
         assertSame(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
     });
+    describe("handles truncated multi-byte sequences at EOF for", () => {
+        const tests = [
+            { name: "Big5", encoding: "big5", encoded: [ 0x81 ] },
+            { name: "EUC-JP", encoding: "euc-jp", encoded: [ 0xA1 ] },
+            { name: "EUC-KR", encoding: "euc-kr", encoded: [ 0x81 ] },
+            { name: "GB18030 lead", encoding: "gb18030", encoded: [ 0x81 ] },
+            { name: "GB18030 lead and digit", encoding: "gb18030", encoded: [ 0x81, 0x30 ] },
+            { name: "GB18030 lead, digit and lead", encoding: "gb18030", encoded: [ 0x81, 0x30, 0x81 ] },
+            { name: "Shift_JIS", encoding: "shift_jis", encoded: [ 0x81 ] }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                assertSame(new TextDecoder(test.encoding).decode(new Uint8Array(test.encoded)), "\uFFFD");
+            });
+        }
+    });
+    describe("rejects invalid standalone bytes for", () => {
+        const tests = [
+            { name: "Big5", encoding: "big5", encoded: 0x80 },
+            { name: "EUC-JP", encoding: "euc-jp", encoded: 0x80 },
+            { name: "EUC-KR", encoding: "euc-kr", encoded: 0x80 },
+            { name: "GB18030", encoding: "gb18030", encoded: 0xFF },
+            { name: "ISO-2022-JP non-ASCII", encoding: "iso-2022-jp", encoded: 0x80 },
+            { name: "ISO-2022-JP shift out", encoding: "iso-2022-jp", encoded: 0x0E },
+            { name: "ISO-2022-JP shift in", encoding: "iso-2022-jp", encoded: 0x0F },
+            { name: "Shift_JIS", encoding: "shift_jis", encoded: 0xFD }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                assertSame(new TextDecoder(test.encoding).decode(new Uint8Array([ test.encoded ])), "\uFFFD");
+            });
+        }
+    });
+    describe("preserves following ASCII after invalid trails in", () => {
+        const tests = [
+            { name: "Big5", encoding: "big5", encoded: [ 0x81, 0x30 ], decoded: "\uFFFD0" },
+            { name: "EUC-JP", encoding: "euc-jp", encoded: [ 0x8E, 0x20 ], decoded: "\uFFFD " },
+            { name: "EUC-KR", encoding: "euc-kr", encoded: [ 0x81, 0x20 ], decoded: "\uFFFD " },
+            { name: "GB18030", encoding: "gb18030", encoded: [ 0x81, 0x20 ], decoded: "\uFFFD " }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                assertSame(new TextDecoder(test.encoding).decode(new Uint8Array(test.encoded)), test.decoded);
+            });
+        }
+    });
+    describe("rejects unmapped GB18030 four-byte pointers", () => {
+        for (const encoded of [ [ 0x84, 0x31, 0xA5, 0x30 ], [ 0xE3, 0x32, 0x9A, 0x36 ] ]) {
+            it(encoded.map(byte => byte.toString(16).toUpperCase().padStart(2, "0")).join(" "), () => {
+                assertSame(new TextDecoder("gb18030").decode(new Uint8Array(encoded)), "\uFFFD");
+            });
+        }
+    });
+    describe("handles invalid ISO-2022-JP bytes in", () => {
+        const tests = [
+            { name: "Roman state non-ASCII", encoded: [ 0x1B, 0x28, 0x4A, 0x80 ], decoded: "\uFFFD" },
+            { name: "Roman state shift out", encoded: [ 0x1B, 0x28, 0x4A, 0x0E ], decoded: "\uFFFD" },
+            { name: "Roman state shift in", encoded: [ 0x1B, 0x28, 0x4A, 0x0F ], decoded: "\uFFFD" },
+            { name: "Katakana state", encoded: [ 0x1B, 0x28, 0x49, 0x20 ], decoded: "\uFFFD" },
+            { name: "JIS0208 lead state", encoded: [ 0x1B, 0x24, 0x42, 0x20 ], decoded: "\uFFFD" },
+            { name: "JIS0208 trail escape", encoded: [ 0x1B, 0x24, 0x42, 0x21, 0x1B, 0x28, 0x42, 0x41 ], decoded: "\uFFFDA" },
+            { name: "JIS0208 trail EOF", encoded: [ 0x1B, 0x24, 0x42, 0x21 ], decoded: "\uFFFD" },
+            { name: "JIS0208 invalid trail", encoded: [ 0x1B, 0x24, 0x42, 0x21, 0x20 ], decoded: "\uFFFD" },
+            { name: "consecutive designations", encoded: [ 0x1B, 0x28, 0x42, 0x1B, 0x28, 0x42 ], decoded: "\uFFFD" }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                assertSame(new TextDecoder("iso-2022-jp").decode(new Uint8Array(test.encoded)), test.decoded);
+            });
+        }
+    });
+    it("decodes ordinary ASCII in ISO-2022-JP Roman state", () => {
+        assertSame(new TextDecoder("iso-2022-jp").decode(new Uint8Array([ 0x1B, 0x28, 0x4A, 0x41 ])), "A");
+    });
+    it("decodes JIS0208 with the legacy ISO-2022-JP designation", () => {
+        assertSame(new TextDecoder("iso-2022-jp").decode(new Uint8Array([ 0x1B, 0x24, 0x40, 0x30, 0x6C ])), "\u4E00");
+    });
+    it("decodes EUC-JP halfwidth Katakana", () => {
+        assertSame(new TextDecoder("euc-jp").decode(new Uint8Array([ 0x8E, 0xA1 ])), "\uFF61");
+    });
+    it("decodes Shift_JIS private-use characters", () => {
+        assertSame(new TextDecoder("shift_jis").decode(new Uint8Array([ 0xF0, 0x40 ])), "\uE000");
+    });
+    it("decodes Shift_JIS halfwidth Katakana", () => {
+        assertSame(new TextDecoder("shift_jis").decode(new Uint8Array([ 0xA1 ])), "\uFF61");
+    });
+    it("decodes Big5 combining mappings", () => {
+        assertSame(new TextDecoder("big5").decode(new Uint8Array([ 0x88, 0x62, 0x88, 0x64, 0x88, 0xA3, 0x88, 0xA5 ])),
+            "\u00CA\u0304\u00CA\u030C\u00EA\u0304\u00EA\u030C");
+    });
     describe("preserves byte order during error recovery", () => {
         const tests = [
             { name: "UTF-16LE", encoding: "utf-16le", encoded: [ 0x00, 0xD8, 0x41, 0x00 ], decoded: "\uFFFDA" },

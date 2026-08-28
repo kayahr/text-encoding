@@ -45,9 +45,6 @@ export class Big5Encoder extends AbstractEncoder {
             return this.fail(codePoint);
         }
         const lead = Math.floor(index / 157) + 0x81;
-        if (lead < 0xA1) {
-            return this.fail(codePoint);
-        }
         const trail = index % 157;
         const offset = trail < 0x3F ? 0x40 : 0x62;
         return [ lead, trail + offset ];

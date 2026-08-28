@@ -24,7 +24,7 @@ function stringToCodePoints(string: string): number[] {
             codePoints.push(c);
         } else if (c >= 0xDC00 && c <= 0xDFFF) {
             codePoints.push(0xFFFD);
-        } else if (c >= 0xD800 && c <= 0xDBFF) {
+        } else {
             if (i === n - 1) {
                 codePoints.push(0xFFFD);
             } else {
@@ -70,9 +70,6 @@ function encodeCodePoint(encoder: Encoder, codePoint: number): number[] {
     const output: number[] = [];
     while (!input.isEndOfBuffer()) {
         const result = encoder.encode(input);
-        if (result === FINISHED) {
-            break;
-        }
         appendEncodedBytes(output, result);
     }
     return output;
@@ -163,5 +160,7 @@ export class TextEncoder implements globalThis.TextEncoder {
  * @returns The created text encoder.
  */
 export function createTextEncoder(label = "utf-8"): globalThis.TextEncoder | TextEncoder {
-    return label === "utf-8" && typeof globalThis.TextEncoder === "function" ? new globalThis.TextEncoder() : new TextEncoder(label);
+    return typeof globalThis.TextEncoder === "function" && getEncoding(label).getName() === "utf-8"
+        ? new globalThis.TextEncoder()
+        : new TextEncoder(label);
 }

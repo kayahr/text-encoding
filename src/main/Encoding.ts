@@ -83,16 +83,6 @@ export class Encoding {
     }
 
     /**
-     * Checks if encoding has the given label.
-     *
-     * @param label - The label to check.
-     * @returns True if encoding has the label, false if not.
-     */
-    public hasLabel(label: string): boolean {
-        return this.labels.includes(label.trim().toLowerCase());
-    }
-
-    /**
      * Returns the labels of this encoding.
      *
      * @returns The encoding labels.

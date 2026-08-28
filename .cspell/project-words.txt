@@ -26,3 +26,4 @@ oxlint
 Reimer
 sjis
 SUPERSETS
+unrepresentable

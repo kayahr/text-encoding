@@ -9,6 +9,16 @@ import type { Decoder } from "./Decoder.ts";
 import { type Encoding, getEncoding } from "./Encoding.ts";
 
 /**
+ * Converts one or more code points to a string.
+ *
+ * @param codePoints - Code point or code points to convert.
+ * @returns The created string.
+ */
+function codePointsToString(codePoints: number | number[]): string {
+    return typeof codePoints === "number" ? String.fromCodePoint(codePoints) : String.fromCodePoint(...codePoints);
+}
+
+/**
  * The TextDecoder represents a decoder for a specific text encoding, such as UTF-8, ISO-8859-2, KOI8-R, GBK, etc.
  * A decoder takes a stream of bytes as input and emits a stream of code points.
  */
@@ -70,11 +80,8 @@ export class TextDecoder implements globalThis.TextDecoder {
             let result: number | number[] | null;
             while (!inputStream.isEndOfBuffer()) {
                 result = this.decoder.decode(inputStream);
-                if (result === FINISHED) {
-                    break;
-                }
                 if (result != null) {
-                    output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
+                    output += codePointsToString(result);
                 }
             }
             if (!stream) {
@@ -84,7 +91,7 @@ export class TextDecoder implements globalThis.TextDecoder {
                         break;
                     }
                     if (result != null) {
-                        output += typeof result === "number" ? String.fromCodePoint(result) : String.fromCodePoint(...result);
+                        output += codePointsToString(result);
                     }
                 } while (!inputStream.isEndOfBuffer());
             }

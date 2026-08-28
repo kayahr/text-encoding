@@ -46,8 +46,7 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                     this.outputFlag = false;
                     return 0x203E;
                 }
-                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E && byte !== 0x0F
-                    && byte !== 0x1B && byte !== 0x5C && byte !== 0x7E) {
+                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E && byte !== 0x0F) {
                     this.outputFlag = false;
                     return byte;
                 }
@@ -161,8 +160,7 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                     this.state = State.EscapeStart;
                     return null;
                 }
-                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E
-                    && byte !== 0x0F && byte !== 0x1B) {
+                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E && byte !== 0x0F) {
                     this.outputFlag = false;
                     return byte;
                 }
