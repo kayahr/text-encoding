@@ -30,7 +30,7 @@ function getCodePoint(index: number): number | null {
     let lower = 0;
     let upper = gb18030ranges.length - 1;
     while (lower < upper) {
-        const middle = Math.ceil((lower + upper) / 2);
+        const middle = (lower + upper + 1) >> 1;
         if (gb18030ranges[middle][0] <= index) {
             lower = middle;
         } else {
@@ -49,29 +49,23 @@ export class GBDecoder extends AbstractDecoder {
     private second = 0x00;
     private third = 0x00;
 
-    /** @inheritdoc */
-    public decode(buffer: ByteBuffer): number | number[] | null {
-        const byte = buffer.read();
-        if (byte === END_OF_BUFFER) {
-            if (this.first === 0x00) {
-                return FINISHED;
-            }
-            this.first = 0x00;
-            this.second = 0x00;
-            this.third = 0x00;
-            return this.fail();
-        }
-        let codePoint: number | null;
+    /**
+     * Decodes a byte while a multi-byte sequence is pending.
+     *
+     * @param buffer - The byte buffer to decode.
+     * @param byte   - The byte to decode.
+     * @returns The decoded code point, or null if more bytes are needed.
+     */
+    private decodePending(buffer: ByteBuffer, byte: number): number | null {
         if (this.third !== 0x00) {
             if (!inRange(byte, 0x30, 0x39)) {
-                const bytes = [ this.second, this.third, byte ];
+                buffer.write(this.second, this.third, byte);
                 this.first = 0x00;
                 this.second = 0x00;
                 this.third = 0x00;
-                buffer.write(...bytes);
                 return this.fail();
             }
-            codePoint = getCodePoint((((this.first - 0x81) * 10 + this.second - 0x30) * 126 + this.third - 0x81)
+            const codePoint = getCodePoint((((this.first - 0x81) * 10 + this.second - 0x30) * 126 + this.third - 0x81)
                 * 10 + byte - 0x30);
             this.first = 0x00;
             this.second = 0x00;
@@ -88,23 +82,36 @@ export class GBDecoder extends AbstractDecoder {
             this.second = 0x00;
             return this.fail();
         }
-        if (this.first !== 0x00) {
-            if (inRange(byte, 0x30, 0x39)) {
-                this.second = byte;
-                return null;
-            }
-            const lead = this.first;
-            let index: number | null = null;
-            this.first = 0x00;
+        if (inRange(byte, 0x30, 0x39)) {
+            this.second = byte;
+            return null;
+        }
+        const lead = this.first;
+        this.first = 0x00;
+        if (inRange(byte, 0x40, 0x7E) || inRange(byte, 0x80, 0xFE)) {
             const offset = byte < 0x7F ? 0x40 : 0x41;
-            if (inRange(byte, 0x40, 0x7E) || inRange(byte, 0x80, 0xFE)) {
-                index = (lead - 0x81) * 190 + (byte - offset);
+            return gb18030[(lead - 0x81) * 190 + (byte - offset)];
+        }
+        if (isASCII(byte)) {
+            buffer.write(byte);
+        }
+        return this.fail();
+    }
+
+    /** @inheritdoc */
+    public decode(buffer: ByteBuffer): number | number[] | null {
+        const byte = buffer.read();
+        if (byte === END_OF_BUFFER) {
+            if (this.first === 0x00) {
+                return FINISHED;
             }
-            codePoint = index == null ? null : gb18030[index];
-            if (codePoint == null && isASCII(byte)) {
-                buffer.write(byte);
-            }
-            return codePoint ?? this.fail();
+            this.first = 0x00;
+            this.second = 0x00;
+            this.third = 0x00;
+            return this.fail();
+        }
+        if (this.first !== 0x00) {
+            return this.decodePending(buffer, byte);
         }
         if (isASCII(byte)) {
             return byte;

@@ -19,6 +19,7 @@ const State = {
     EscapeStart: 5,
     Escape: 6
 } as const;
+type NonASCIIState = Exclude<State, typeof State.ASCII>;
 
 /**
  * Decoder for iso-2022-jp encoding.
@@ -29,10 +30,16 @@ export class ISO2022JPDecoder extends AbstractDecoder {
     private lead = 0x00;
     private outputFlag = false;
 
-    /** @inheritdoc */
-    public decode(buffer: ByteBuffer): null | number | number[] {
-        const byte = buffer.read();
-        switch (this.state) {
+    /**
+     * Decodes a byte while the decoder is not in the ASCII state.
+     *
+     * @param buffer - The byte buffer to decode.
+     * @param byte   - The byte to decode.
+     * @param state  - The current non-ASCII decoder state.
+     * @returns The decoded code point(s), or null if more bytes are needed.
+     */
+    private decodeNonASCII(buffer: ByteBuffer, byte: number, state: NonASCIIState): null | number | number[] {
+        switch (state) {
             case State.Roman:
                 if (byte === 0x1B) {
                     this.state = State.EscapeStart;
@@ -128,14 +135,11 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                 let state: State | null = null;
                 if (lead === 0x28 && byte === 0x42) {
                     state = State.ASCII;
-                }
-                if (lead === 0x28 && byte === 0x4A) {
+                } else if (lead === 0x28 && byte === 0x4A) {
                     state = State.Roman;
-                }
-                if (lead === 0x28 && byte === 0x49) {
+                } else if (lead === 0x28 && byte === 0x49) {
                     state = State.Katakana;
-                }
-                if (lead === 0x24 && (byte === 0x40 || byte === 0x42)) {
+                } else if (lead === 0x24 && (byte === 0x40 || byte === 0x42)) {
                     state = State.LeadByte;
                 }
                 if (state !== null) {
@@ -154,21 +158,27 @@ export class ISO2022JPDecoder extends AbstractDecoder {
                 this.state = this.outputState;
                 return this.fail();
             }
-
-            default:
-                if (byte === 0x1B) {
-                    this.state = State.EscapeStart;
-                    return null;
-                }
-                if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E && byte !== 0x0F) {
-                    this.outputFlag = false;
-                    return byte;
-                }
-                if (byte === END_OF_BUFFER) {
-                    return FINISHED;
-                }
-                this.outputFlag = false;
-                return this.fail();
         }
+    }
+
+    /** @inheritdoc */
+    public decode(buffer: ByteBuffer): null | number | number[] {
+        const byte = buffer.read();
+        if (this.state !== State.ASCII) {
+            return this.decodeNonASCII(buffer, byte, this.state);
+        }
+        if (byte === 0x1B) {
+            this.state = State.EscapeStart;
+            return null;
+        }
+        if (inRange(byte, 0x00, 0x7F) && byte !== 0x0E && byte !== 0x0F) {
+            this.outputFlag = false;
+            return byte;
+        }
+        if (byte === END_OF_BUFFER) {
+            return FINISHED;
+        }
+        this.outputFlag = false;
+        return this.fail();
     }
 }

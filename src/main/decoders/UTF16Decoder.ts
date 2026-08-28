@@ -29,10 +29,10 @@ export abstract class UTF16Decoder extends AbstractDecoder {
     /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
-        if (byte === END_OF_BUFFER && (this.leadByte !== null || this.leadSurrogate !== null)) {
-            return this.fail();
-        }
-        if (byte === END_OF_BUFFER && this.leadByte == null && this.leadSurrogate == null) {
+        if (byte === END_OF_BUFFER) {
+            if (this.leadByte !== null || this.leadSurrogate !== null) {
+                return this.fail();
+            }
             return FINISHED;
         }
         if (this.leadByte == null) {

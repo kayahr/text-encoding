@@ -20,12 +20,11 @@ export class EUCJPDecoder extends AbstractDecoder {
     /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
-        if (byte === END_OF_BUFFER && this.lead !== 0x00) {
+        if (byte === END_OF_BUFFER) {
+            const incomplete = this.lead !== 0x00;
             this.lead = 0x00;
-            return this.fail();
-        }
-        if (byte === END_OF_BUFFER && this.lead === 0x00) {
-            return FINISHED;
+            this.jis0212Flag = false;
+            return incomplete ? this.fail() : FINISHED;
         }
         if (this.lead === 0x8E && inRange(byte, 0xA1, 0xDF)) {
             this.lead = 0x00;

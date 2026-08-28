@@ -400,6 +400,19 @@ describe("TextDecoder", () => {
         new Uint8Array(buffer)[0] = 0x41;
         assertSame(new TextDecoder().decode(buffer), "A");
     });
+    it("can decode from empty buffer sources", () => {
+        const decoder = new TextDecoder();
+        assertSame(decoder.decode(new Uint8Array(0)), "");
+        assertSame(decoder.decode(new ArrayBuffer(0)), "");
+        assertSame(decoder.decode(new SharedArrayBuffer(0)), "");
+        assertSame(decoder.decode(new DataView(new ArrayBuffer(0))), "");
+    });
+    it("flushes pending state only when an empty input ends the stream", () => {
+        const decoder = new TextDecoder();
+        assertSame(decoder.decode(Uint8Array.of(0xC2), { stream: true }), "");
+        assertSame(decoder.decode(new Uint8Array(0), { stream: true }), "");
+        assertSame(decoder.decode(), "\uFFFD");
+    });
     describe("can decode from any typed array with and without buffer offsets:", () => {
         const bytes = [ 65, 66, 97, 98, 99, 100, 101, 102, 103, 104, 67, 68, 69, 70, 71, 72 ];
         const chars = "ABabcdefghCDEFGH";
@@ -547,6 +560,18 @@ describe("TextDecoder", () => {
     });
     it("correctly maps 0xCA to U+05BA in windows-1255 encoding", () => {
         assertSame(new TextDecoder("windows-1255").decode(new Uint8Array([ 0xca ])), "\u05BA");
+    });
+    it("correctly decodes a large input containing a multi-code-point mapping", () => {
+        const encoded = new Uint8Array(4096);
+        encoded.fill(0x41);
+        encoded.set([ 0x88, 0x62 ], 4094);
+        assertSame(new TextDecoder("big5").decode(encoded), `${"A".repeat(4094)}\u00CA\u0304`);
+    });
+    it("correctly flushes an incomplete sequence after a large input", () => {
+        const encoded = new Uint8Array(4096);
+        encoded.fill(0x41);
+        encoded[4095] = 0xC2;
+        assertSame(new TextDecoder().decode(encoded), `${"A".repeat(4095)}\uFFFD`);
     });
     it("correctly decodes a very large input", () => {
         const data = new Uint16Array(1_000_000);

@@ -3,11 +3,11 @@
  * See LICENSE.md for licensing information.
  */
 
-import jis0208 from "../../../data/jis0208.cp.js";
 import { AbstractEncoder } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
-import { inRange, indexOf, isASCII } from "../util.ts";
+import { inRange, isASCII } from "../util.ts";
+import { getJIS0208Pointer } from "./JIS0208Index.ts";
 
 /**
  * Encoder for euc-jp encoding.
@@ -34,7 +34,7 @@ export class EUCJPEncoder extends AbstractEncoder {
         if (codePoint === 0x2212) {
             codePoint = 0xFF0D;
         }
-        const index = indexOf(jis0208, codePoint);
+        const index = getJIS0208Pointer(codePoint);
         if (index == null) {
             return this.fail(codePoint);
         }

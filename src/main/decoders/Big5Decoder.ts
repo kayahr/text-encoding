@@ -18,11 +18,11 @@ export class Big5Decoder extends AbstractDecoder {
     /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
-        if (byte === END_OF_BUFFER && this.lead !== 0x00) {
-            this.lead = 0x00;
-            return this.fail();
-        }
-        if (byte === END_OF_BUFFER && this.lead === 0x00) {
+        if (byte === END_OF_BUFFER) {
+            if (this.lead !== 0x00) {
+                this.lead = 0x00;
+                return this.fail();
+            }
             return FINISHED;
         }
         if (this.lead !== 0x00) {

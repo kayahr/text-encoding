@@ -38,15 +38,3 @@ export function convertCodeUnitToBytes(codeUnit: number, bigEndian: boolean): [ 
 export function inRange(value: number, min: number, max: number): boolean {
     return value >= min && value <= max;
 }
-
-/**
- * Returns the index of the given value within the given array. Returns null if value was not found.
- *
- * @param array - The array to search in.
- * @param value - The value to search for.
- * @returns The found index or null if value was not found.
- */
-export function indexOf<T>(array: T[], value: T): number | null {
-    const index = array.indexOf(value);
-    return index === -1 ? null : index;
-}

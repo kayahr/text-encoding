@@ -4,11 +4,11 @@
  */
 
 import iso2022jpKatakana from "../../../data/iso-2022-jp-katakana.cp.js";
-import jis0208 from "../../../data/jis0208.cp.js";
 import { AbstractEncoder, NO_TRAILING_BYTES } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
-import { inRange, indexOf, isASCII } from "../util.ts";
+import { inRange, isASCII } from "../util.ts";
+import { getJIS0208Pointer } from "./JIS0208Index.ts";
 
 type State = typeof State[keyof typeof State];
 const State = {
@@ -33,13 +33,13 @@ export class ISO2022JPEncoder extends AbstractEncoder {
     /** @inheritdoc */
     public encode(buffer: ByteBuffer): number | number[] {
         let codePoint = buffer.read();
-        if (codePoint === END_OF_BUFFER && this.state !== State.ASCII) {
+        if (codePoint === END_OF_BUFFER) {
+            if (this.state === State.ASCII) {
+                return FINISHED;
+            }
             buffer.write(codePoint);
             this.state = State.ASCII;
             return [ 0x1B, 0x28, 0x42 ];
-        }
-        if (codePoint === END_OF_BUFFER && this.state === State.ASCII) {
-            return FINISHED;
         }
         if ((this.state === State.ASCII || this.state === State.Roman)
                 && (codePoint === 0x000E || codePoint === 0x000F || codePoint === 0x001B)) {
@@ -48,9 +48,8 @@ export class ISO2022JPEncoder extends AbstractEncoder {
         if (this.state === State.ASCII && isASCII(codePoint)) {
             return codePoint;
         }
-        if (this.state === State.Roman && ((isASCII(codePoint) && codePoint !== 0x005C
-                && codePoint !== 0x007E) || (codePoint === 0x00A5 || codePoint === 0x203E))) {
-            if (isASCII(codePoint)) {
+        if (this.state === State.Roman) {
+            if (isASCII(codePoint) && codePoint !== 0x005C && codePoint !== 0x007E) {
                 return codePoint;
             }
             if (codePoint === 0x00A5) {
@@ -76,7 +75,7 @@ export class ISO2022JPEncoder extends AbstractEncoder {
         if (inRange(codePoint, 0xFF61, 0xFF9F)) {
             codePoint = iso2022jpKatakana[codePoint - 0xFF61];
         }
-        const index = indexOf(jis0208, codePoint);
+        const index = getJIS0208Pointer(codePoint);
         if (index == null) {
             return this.fail(codePoint);
         }

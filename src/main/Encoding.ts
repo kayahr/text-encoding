@@ -20,8 +20,8 @@ const encodings = new Map<string, Encoding>();
  */
 export function registerEncoding(name: string, labels: readonly string[], decoder: DecoderConstructor,
         encoder: EncoderConstructor): Encoding {
-    const encoding = new Encoding(name, labels, decoder, encoder);
-    for (const label of encoding.getLabels()) {
+    const encoding = new Encoding(name, decoder, encoder);
+    for (const label of labels) {
         encodings.set(label, encoding);
     }
     return encoding;
@@ -49,9 +49,6 @@ export class Encoding {
     /** The encoding name. */
     private readonly name: string;
 
-    /** The list of encoding labels. */
-    private readonly labels: readonly string[];
-
     /** The constructor of the decoder which can decode this encoding. */
     private readonly decoder: DecoderConstructor;
 
@@ -62,13 +59,11 @@ export class Encoding {
      * Creates a new encoding.
      *
      * @param name - The encoding name.
-     * @param labels - The list of encoding labels.
      * @param decoder - The constructor of the decoder which can decode this encoding.
      * @param encoder - The constructor of the encoder which can encode this encoding.
      */
-    public constructor(name: string, labels: readonly string[], decoder: DecoderConstructor, encoder: EncoderConstructor) {
+    public constructor(name: string, decoder: DecoderConstructor, encoder: EncoderConstructor) {
         this.name = name;
-        this.labels = labels;
         this.decoder = decoder;
         this.encoder = encoder;
     }
@@ -80,15 +75,6 @@ export class Encoding {
      */
     public getName(): string {
         return this.name;
-    }
-
-    /**
-     * Returns the labels of this encoding.
-     *
-     * @returns The encoding labels.
-     */
-    public getLabels(): readonly string[] {
-        return this.labels;
     }
 
     /**

@@ -7,9 +7,13 @@ import big5 from "../../../data/big5.cp.js";
 import { AbstractEncoder } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
-import { indexOf, isASCII } from "../util.ts";
+import { isASCII } from "../util.ts";
+import { CodePointIndex } from "./CodePointIndex.ts";
 
-let big5WithoutHKSCs: Array<number | null> | null = null;
+const BIG5_INDEX_START = (0xA1 - 0x81) * 157;
+const BIG5_LAST_POINTER_CODE_POINTS = [ 0x2550, 0x255E, 0x2561, 0x256A, 0x5341, 0x5345 ] as const;
+
+let big5Index: CodePointIndex | null = null;
 
 /**
  * Returns the index for the given code point.
@@ -18,13 +22,13 @@ let big5WithoutHKSCs: Array<number | null> | null = null;
  * @returns The found index or null if not found.
  */
 function getIndex(codePoint: number): number | null {
-    big5WithoutHKSCs ??= big5.map((codePoint, index) => ((index < (0xA1 - 0x81) * 157) ? null : codePoint));
-    const index = big5WithoutHKSCs;
-    if (codePoint === 0x2550 || codePoint === 0x255E || codePoint === 0x2561 || codePoint === 0x256A
-            || codePoint === 0x5341 || codePoint === 0x5345) {
-        return index.lastIndexOf(codePoint);
+    if (big5Index == null) {
+        big5Index = new CodePointIndex(big5, BIG5_INDEX_START);
+        for (const lastPointerCodePoint of BIG5_LAST_POINTER_CODE_POINTS) {
+            big5Index.setBMP(lastPointerCodePoint, big5.lastIndexOf(lastPointerCodePoint));
+        }
     }
-    return indexOf(index, codePoint);
+    return big5Index.get(codePoint);
 }
 
 /**

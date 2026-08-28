@@ -21,11 +21,11 @@ export class UTF8Decoder extends AbstractDecoder {
     /** @inheritdoc */
     public decode(buffer: ByteBuffer): number | number[] | null {
         const byte = buffer.read();
-        if (byte === END_OF_BUFFER && this.bytesNeeded !== 0) {
-            this.bytesNeeded = 0;
-            return this.fail();
-        }
         if (byte === END_OF_BUFFER) {
+            if (this.bytesNeeded !== 0) {
+                this.bytesNeeded = 0;
+                return this.fail();
+            }
             return FINISHED;
         }
         if (this.bytesNeeded === 0) {

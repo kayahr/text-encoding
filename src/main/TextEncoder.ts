@@ -9,38 +9,33 @@ import type { Encoder } from "./Encoder.ts";
 import { type Encoding, getEncoding } from "./Encoding.ts";
 
 /**
+ * Returns the Unicode scalar value at the given UTF-16 offset. Lone surrogates are replaced with U+FFFD.
+ *
+ * @param string - Input string.
+ * @param offset - UTF-16 offset to read.
+ * @returns Unicode scalar value.
+ */
+function readCodePoint(string: string, offset: number): number {
+    const codePoint = string.codePointAt(offset)!;
+    return codePoint >= 0xD800 && codePoint <= 0xDFFF ? 0xFFFD : codePoint;
+}
+
+/**
  * Converts string to code points.
  *
  * @param string - Input string of UTF-16 code units.
  * @returns Code points.
  */
 function stringToCodePoints(string: string): number[] {
-    const n = string.length;
-    let i = 0;
-    const codePoints = [];
-    while (i < n) {
-        const c = string.charCodeAt(i);
-        if (c < 0xD800 || c > 0xDFFF) {
-            codePoints.push(c);
-        } else if (c >= 0xDC00 && c <= 0xDFFF) {
-            codePoints.push(0xFFFD);
-        } else {
-            if (i === n - 1) {
-                codePoints.push(0xFFFD);
-            } else {
-                const d = string.charCodeAt(i + 1);
-                if (d >= 0xDC00 && d <= 0xDFFF) {
-                    const a = c & 0x3FF;
-                    const b = d & 0x3FF;
-                    codePoints.push(0x10000 + (a << 10) + b);
-                    i++;
-                } else {
-                    codePoints.push(0xFFFD);
-                }
-            }
-        }
-        i++;
+    const codePoints = new Array<number>(string.length);
+    let sourceOffset = 0;
+    let outputOffset = 0;
+    while (sourceOffset < string.length) {
+        const codePoint = readCodePoint(string, sourceOffset);
+        codePoints[outputOffset++] = codePoint;
+        sourceOffset += codePoint > 0xFFFF ? 2 : 1;
     }
+    codePoints.length = outputOffset;
     return codePoints;
 }
 
@@ -62,17 +57,17 @@ function appendEncodedBytes(output: number[], result: number | number[]): void {
  * Encodes a single code point with the given encoder.
  *
  * @param encoder   - Encoder to use.
+ * @param input     - Reusable input buffer.
+ * @param output    - Reusable output buffer receiving the encoded bytes.
  * @param codePoint - Code point to encode.
- * @returns Encoded bytes, including any required state prefix.
  */
-function encodeCodePoint(encoder: Encoder, codePoint: number): number[] {
-    const input = new ByteBuffer([ codePoint ]);
-    const output: number[] = [];
+function encodeCodePoint(encoder: Encoder, input: ByteBuffer, output: number[], codePoint: number): void {
+    input.write(codePoint);
+    output.length = 0;
     while (!input.isEndOfBuffer()) {
         const result = encoder.encode(input);
         appendEncodedBytes(output, result);
     }
-    return output;
 }
 
 /**
@@ -124,30 +119,30 @@ export class TextEncoder implements globalThis.TextEncoder {
     /** @inheritdoc */
     public encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult {
         const encoder = this.enc.createEncoder();
-        let read = 0;
+        const input = new ByteBuffer([]);
+        const bytes: number[] = [];
+        let sourceOffset = 0;
         let written = 0;
         let trailingBytes = encoder.getTrailingBytes();
 
         // Keep each accepted source prefix independently decodable, including final bytes for stateful encodings.
-        for (const codePoint of stringToCodePoints(source)) {
-            if (written === destination.byteLength) {
-                break;
-            }
-            const bytes = encodeCodePoint(encoder, codePoint);
+        while (sourceOffset < source.length && written < destination.byteLength) {
+            const codePoint = readCodePoint(source, sourceOffset);
+            encodeCodePoint(encoder, input, bytes, codePoint);
             const candidateTrailingBytes = encoder.getTrailingBytes();
             if (written + bytes.length + candidateTrailingBytes.length > destination.byteLength) {
                 break;
             }
             destination.set(bytes, written);
             written += bytes.length;
-            read += codePoint > 0xFFFF ? 2 : 1;
+            sourceOffset += codePoint > 0xFFFF ? 2 : 1;
             trailingBytes = candidateTrailingBytes;
         }
 
         destination.set(trailingBytes, written);
         written += trailingBytes.length;
 
-        return { read, written };
+        return { read: sourceOffset, written };
     }
 }
 

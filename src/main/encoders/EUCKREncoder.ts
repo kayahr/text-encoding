@@ -7,7 +7,21 @@ import euckr from "../../../data/euc-kr.cp.js";
 import { AbstractEncoder } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
-import { indexOf, isASCII } from "../util.ts";
+import { isASCII } from "../util.ts";
+import { CodePointIndex } from "./CodePointIndex.ts";
+
+let euckrIndex: CodePointIndex | null = null;
+
+/**
+ * Returns the EUC-KR pointer for the given code point.
+ *
+ * @param codePoint - Code point to look up.
+ * @returns The pointer or null if the code point is not indexed.
+ */
+function getIndex(codePoint: number): number | null {
+    euckrIndex ??= new CodePointIndex(euckr);
+    return euckrIndex.get(codePoint);
+}
 
 /**
  * Encoder for euc-kr encoding.
@@ -22,7 +36,7 @@ export class EUCKREncoder extends AbstractEncoder {
         if (isASCII(codePoint)) {
             return codePoint;
         }
-        const index = indexOf(euckr, codePoint);
+        const index = getIndex(codePoint);
         if (index == null) {
             return this.fail(codePoint);
         }

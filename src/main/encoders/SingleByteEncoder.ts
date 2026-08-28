@@ -7,22 +7,24 @@ import { AbstractEncoder } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
 import type { EncoderConstructor } from "../Encoder.ts";
-import { indexOf, isASCII } from "../util.ts";
+import { isASCII } from "../util.ts";
+
+type IndexLookup = (codePoint: number) => number | null;
 
 /**
  * Encoder for single byte encodings.
  */
 export class SingleByteEncoder extends AbstractEncoder {
-    private readonly index: Array<number | null>;
+    private readonly getIndex: IndexLookup;
 
     /**
      * Constructs new encoder for the given code points.
      *
-     * @param codePoints - The code points of the encoding.
+     * @param getIndex - Function returning the encoding pointer for a code point.
      */
-    private constructor(index: Array<number | null>) {
+    private constructor(getIndex: IndexLookup) {
         super();
-        this.index = index;
+        this.getIndex = getIndex;
     }
 
     /**
@@ -32,9 +34,22 @@ export class SingleByteEncoder extends AbstractEncoder {
      * @returns The created single byte encoder class.
      */
     public static forCodePoints(codePoints: Array<number | null>): EncoderConstructor {
+        let index: Map<number, number> | null = null;
+        const getIndex = (codePoint: number): number | null => {
+            if (index == null) {
+                index = new Map<number, number>();
+                for (let pointer = 0; pointer < codePoints.length; ++pointer) {
+                    const indexedCodePoint = codePoints[pointer];
+                    if (indexedCodePoint != null && indexedCodePoint !== 0 && !index.has(indexedCodePoint)) {
+                        index.set(indexedCodePoint, pointer);
+                    }
+                }
+            }
+            return index.get(codePoint) ?? null;
+        };
         return class extends SingleByteEncoder {
             public constructor() {
-                super(codePoints);
+                super(getIndex);
             }
         };
     }
@@ -48,7 +63,7 @@ export class SingleByteEncoder extends AbstractEncoder {
         if (isASCII(codePoint)) {
             return codePoint;
         }
-        const index = indexOf(this.index, codePoint);
+        const index = this.getIndex(codePoint);
         if (index == null) {
             return this.fail(codePoint);
         }
