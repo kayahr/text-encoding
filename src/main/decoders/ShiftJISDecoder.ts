@@ -33,10 +33,8 @@ export class ShiftJISDecoder extends AbstractDecoder {
             const leadOffset = (lead < 0xA0) ? 0x81 : 0xC1;
             if (inRange(byte, 0x40, 0x7E) || inRange(byte, 0x80, 0xFC)) {
                 index = (lead - leadOffset) * 188 + byte - offset;
-            } else {
-                return this.fail();
             }
-            if (inRange(index, 8836, 10715)) {
+            if (index != null && inRange(index, 8836, 10715)) {
                 return 0xE000 - 8836 + index;
             }
             const codePoint = (index == null) ? null : jis0208[index] || null;

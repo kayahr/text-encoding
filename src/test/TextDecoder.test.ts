@@ -221,7 +221,8 @@ describe("TextDecoder", () => {
             { name: "UTF-16BE", encoding: "utf-16be", encoded: [ 0xD8, 0x00, 0x00, 0x41 ], decoded: "\uFFFDA" },
             { name: "GB18030 two bytes", encoding: "gb18030", encoded: [ 0x81, 0x30, 0x41 ], decoded: "\uFFFD0A" },
             { name: "GB18030 three bytes", encoding: "gb18030", encoded: [ 0x81, 0x30, 0x81, 0x41 ], decoded: "\uFFFD0\u4E04" },
-            { name: "ISO-2022-JP", encoding: "iso-2022-jp", encoded: [ 0x1B, 0x24, 0x41, 0x42 ], decoded: "\uFFFD$AB" }
+            { name: "ISO-2022-JP", encoding: "iso-2022-jp", encoded: [ 0x1B, 0x24, 0x41, 0x42 ], decoded: "\uFFFD$AB" },
+            { name: "Shift_JIS ASCII trail", encoding: "shift_jis", encoded: [ 0x82, 0x22 ], decoded: "\uFFFD\"" }
         ];
         for (const test of tests) {
             it(test.name, () => {
