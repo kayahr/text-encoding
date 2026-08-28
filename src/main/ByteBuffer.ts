@@ -48,11 +48,13 @@ export class ByteBuffer {
     }
 
     /**
-     * Writes the specified bytes to the buffer.
+     * Restores the specified bytes so they are returned by the next reads in the given order.
      *
-     * @param bytes - The bytes to write.
+     * @param bytes - The bytes to restore.
      */
     public write(...bytes: number[]): void {
-        this.restoredBytes.push(...bytes);
+        for (let index = bytes.length - 1; index >= 0; --index) {
+            this.restoredBytes.push(bytes[index]);
+        }
     }
 }

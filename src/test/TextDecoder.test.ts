@@ -215,6 +215,20 @@ describe("TextDecoder", () => {
         assertThrowWithMessage(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ])), TypeError, "Decoder error");
         assertSame(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
     });
+    describe("preserves byte order during error recovery", () => {
+        const tests = [
+            { name: "UTF-16LE", encoding: "utf-16le", encoded: [ 0x00, 0xD8, 0x41, 0x00 ], decoded: "\uFFFDA" },
+            { name: "UTF-16BE", encoding: "utf-16be", encoded: [ 0xD8, 0x00, 0x00, 0x41 ], decoded: "\uFFFDA" },
+            { name: "GB18030 two bytes", encoding: "gb18030", encoded: [ 0x81, 0x30, 0x41 ], decoded: "\uFFFD0A" },
+            { name: "GB18030 three bytes", encoding: "gb18030", encoded: [ 0x81, 0x30, 0x81, 0x41 ], decoded: "\uFFFD0\u4E04" },
+            { name: "ISO-2022-JP", encoding: "iso-2022-jp", encoded: [ 0x1B, 0x24, 0x41, 0x42 ], decoded: "\uFFFD$AB" }
+        ];
+        for (const test of tests) {
+            it(test.name, () => {
+                assertSame(new TextDecoder(test.encoding).decode(new Uint8Array(test.encoded)), test.decoded);
+            });
+        }
+    });
     describe("handles unmapped table entries", () => {
         const tests = [
             { name: "iso-8859-3", encoding: "iso-8859-3", encoded: [ 0xA5 ], decoded: "\uFFFD" },
