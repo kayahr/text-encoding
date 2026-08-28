@@ -7,7 +7,7 @@ import jis0208 from "../../../data/jis0208.cp.js";
 import { AbstractEncoder } from "../AbstractEncoder.ts";
 import { type ByteBuffer, END_OF_BUFFER } from "../ByteBuffer.ts";
 import { FINISHED } from "../constants.ts";
-import { inRange, isASCII } from "../util.ts";
+import { inRange, indexOf, isASCII } from "../util.ts";
 
 let shiftJIS: Array<number | number[] | null> | null = null;
 
@@ -19,7 +19,7 @@ let shiftJIS: Array<number | number[] | null> | null = null;
  */
 function getIndex(codePoint: number): number | null {
     shiftJIS ??= jis0208.map((codePoint, index) => (inRange(index, 8272, 8835) ? null : codePoint));
-    return shiftJIS.indexOf(codePoint);
+    return indexOf(shiftJIS, codePoint);
 }
 
 /**

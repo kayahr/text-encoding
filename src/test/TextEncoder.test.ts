@@ -90,6 +90,14 @@ describe("TextEncoder", () => {
         assertEquals(new TextEncoder("shift_jis").encode("\u306B\u307B\u3093"),
                 new Uint8Array([ 0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1 ])); // Nihon)
     });
+    describe("rejects characters not representable in Shift_JIS", () => {
+        for (const codePoint of [ 0x1F4A9, 0x20AC, 0xFFFD, 0xE000 ]) {
+            it(`U+${codePoint.toString(16).toUpperCase()}`, () => {
+                assertThrowWithMessage(() => new TextEncoder("shift_jis").encode(String.fromCodePoint(codePoint)), TypeError,
+                    `The code point ${codePoint} could not be encoded`);
+            });
+        }
+    });
     it("can encode euc-jp", async () => {
         const encoded = await readData("euc-jp-encoded.txt");
         assertEquals(new TextEncoder("euc-jp").encode(eucjp), encoded);
