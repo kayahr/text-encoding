@@ -6,6 +6,8 @@
 import type { Decoder, DecoderConstructor } from "./Decoder.ts";
 import type { Encoder, EncoderConstructor } from "./Encoder.ts";
 
+const ASCII_WHITESPACE = "\t\n\f\r ";
+
 /** Map with registered encodings. Map key is any lower-cased encoding label. */
 const encodings = new Map<string, Encoding>();
 
@@ -13,6 +15,7 @@ const encodings = new Map<string, Encoding>();
  * Normalizes an encoding label according to the WHATWG Encoding Standard.
  *
  * Removes leading and trailing ASCII whitespace: TAB (U+0009), LF (U+000A), FF (U+000C), CR (U+000D) and SPACE (U+0020).
+ * Scans both ends directly so trimming takes linear time even for long labels containing repeated whitespace.
  * Converts only ASCII uppercase letters A-Z to lowercase. Other whitespace and Unicode letters remain unchanged, so invalid labels such as
  * a label surrounded by non-breaking spaces (U+00A0) or containing the Kelvin sign (U+212A) are not accepted through normalization.
  *
@@ -21,7 +24,15 @@ const encodings = new Map<string, Encoding>();
  * @see https://encoding.spec.whatwg.org/#concept-encoding-get
  */
 function normalizeEncodingLabel(label: string): string {
-    return label.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g, "").replace(/[A-Z]/g, character => character.toLowerCase());
+    let start = 0;
+    let end = label.length;
+    while (start < end && ASCII_WHITESPACE.includes(label[start])) {
+        ++start;
+    }
+    while (end > start && ASCII_WHITESPACE.includes(label[end - 1])) {
+        --end;
+    }
+    return label.slice(start, end).replace(/[A-Z]/g, character => character.toLowerCase());
 }
 
 /**
