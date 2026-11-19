@@ -239,6 +239,8 @@ describe("TextDecoder", () => {
         assertSame(new TextDecoder("utf-16le").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
         assertThrowWithMessage(() => new TextDecoder("utf-16be", { fatal: true }).decode(new Uint8Array([ 0x00 ])), TypeError, "Decoder error");
         assertSame(new TextDecoder("utf-16be").decode(new Uint8Array([ 0x00 ])), "\uFFFD");
+        assertSame(new TextDecoder("utf-16le").decode(new Uint8Array([ 0x00, 0xD8 ])), "\uFFFD");
+        assertSame(new TextDecoder("utf-16be").decode(new Uint8Array([ 0xD8, 0x00 ])), "\uFFFD");
     });
     describe("handles truncated multi-byte sequences at EOF for", () => {
         const tests = [
@@ -458,6 +460,10 @@ describe("TextDecoder", () => {
         const encoded = await readData("iso-2022-jp-encoded.txt");
         assertSame(new TextDecoder("iso-2022-jp").decode(encoded), iso2022jp);
     });
+    it("flushes an incomplete iso-2022-jp sequence after a restored escape byte", () => {
+        const encoded = new Uint8Array([ 0x1B, 0x24, 0x40, 0x1B, 0x24 ]);
+        assertSame(new TextDecoder("iso-2022-jp").decode(encoded), "\uFFFD\uFFFD");
+    });
     it("can decode utf encodings with missing BOMs", () => {
         assertSame(new TextDecoder("utf-8").decode(new Uint8Array(utf8)), utfSample);
         assertSame(new TextDecoder("utf-16le").decode(new Uint8Array(utf16le)), utfSample);
@@ -523,6 +529,17 @@ describe("TextDecoder", () => {
     it("can decode euc-jp", async () => {
         const encoded = await readData("euc-jp-encoded.txt");
         assertSame(new TextDecoder("euc-jp").decode(encoded), eucjp);
+    });
+    it("replaces invalid non-ASCII euc-jp trails and preserves following text", () => {
+        const tests = [
+            [ 0x8E, 0x8E, 0x41, 0x42 ],
+            [ 0x8F, 0xA2, 0x8E, 0x41, 0x42 ],
+            [ 0xB0, 0xFF, 0x41, 0x42 ],
+            [ 0xB0, 0xA0, 0x41, 0x42 ]
+        ];
+        for (const encoded of tests) {
+            assertSame(new TextDecoder("euc-jp").decode(new Uint8Array(encoded)), "\uFFFDAB");
+        }
     });
     it("can decode JIS0212 characters from euc-jp", () => {
         const tests = [
