@@ -10,6 +10,21 @@ import type { Encoder, EncoderConstructor } from "./Encoder.ts";
 const encodings = new Map<string, Encoding>();
 
 /**
+ * Normalizes an encoding label according to the WHATWG Encoding Standard.
+ *
+ * Removes leading and trailing ASCII whitespace: TAB (U+0009), LF (U+000A), FF (U+000C), CR (U+000D) and SPACE (U+0020).
+ * Converts only ASCII uppercase letters A-Z to lowercase. Other whitespace and Unicode letters remain unchanged, so invalid labels such as
+ * a label surrounded by non-breaking spaces (U+00A0) or containing the Kelvin sign (U+212A) are not accepted through normalization.
+ *
+ * @param label - The encoding label to normalize.
+ * @returns The label with surrounding ASCII whitespace removed and ASCII uppercase letters converted to lowercase.
+ * @see https://encoding.spec.whatwg.org/#concept-encoding-get
+ */
+function normalizeEncodingLabel(label: string): string {
+    return label.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g, "").replace(/[A-Z]/g, character => character.toLowerCase());
+}
+
+/**
  * Registers an encoding.
  *
  * @param name    - The encoding name.
@@ -35,7 +50,7 @@ export function registerEncoding(name: string, labels: readonly string[], decode
  * @throws RangeError - When encoding was not found.
  */
 export function getEncoding(label: string): Encoding {
-    const encoding = encodings.get(label.trim().toLowerCase());
+    const encoding = encodings.get(normalizeEncodingLabel(label));
     if (encoding == null) {
         throw new RangeError(`Encoding not supported: ${label}`);
     }

@@ -30,3 +30,4 @@ SUPERSETS
 unicodefeff
 unicodefffe
 unrepresentable
+WHATWG
