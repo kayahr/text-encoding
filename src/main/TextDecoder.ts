@@ -82,6 +82,7 @@ export class TextDecoder implements globalThis.TextDecoder {
     private readonly bomEncoding: boolean;
     private seenBOM = false;
     private decoder: Decoder | null = null;
+    private pendingBytes: number[] | null = null;
 
     /**
      * Creates text decoder for the given encoding.
@@ -121,8 +122,8 @@ export class TextDecoder implements globalThis.TextDecoder {
             bytes = new Uint8Array(0);
         }
 
-        // An empty streaming input cannot produce output. A final empty input must still flush a pending decoder state.
-        if (bytes.byteLength === 0 && (stream || this.decoder == null)) {
+        // Pending input from a streaming error must be processed even when no new bytes are provided.
+        if (bytes.byteLength === 0 && this.pendingBytes == null && (stream || this.decoder == null)) {
             return "";
         }
 
@@ -132,10 +133,13 @@ export class TextDecoder implements globalThis.TextDecoder {
             this.seenBOM = false;
         }
 
+        const pendingBytes = this.pendingBytes;
+        const inputStream = new ByteBuffer(pendingBytes == null ? bytes : [ ...pendingBytes, ...bytes ]);
+        this.pendingBytes = null;
+
         try {
             // Decode the input bytes
-            const inputStream = new ByteBuffer(bytes);
-            const bufferedOutput: BufferedOutput | null = bytes.byteLength >= OUTPUT_CHUNK_SIZE
+            const bufferedOutput: BufferedOutput | null = bytes.byteLength + (pendingBytes?.length ?? 0) >= OUTPUT_CHUNK_SIZE
                 ? { chunks: [], codePoints: [] }
                 : null;
             let decoded = "";
@@ -186,6 +190,12 @@ export class TextDecoder implements globalThis.TextDecoder {
         } finally {
             if (!stream) {
                 this.decoder = null;
+            } else if (!inputStream.isEndOfBuffer()) {
+                // Copy unread input so later changes to the caller's buffer cannot affect the next decode.
+                this.pendingBytes = [];
+                while (!inputStream.isEndOfBuffer()) {
+                    this.pendingBytes.push(inputStream.read());
+                }
             }
         }
     }

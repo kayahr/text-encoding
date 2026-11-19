@@ -139,6 +139,66 @@ describe("TextDecoder", () => {
             assertSame(decoder.decode(Uint8Array.of(0x41, 0x00)), "A");
         });
     });
+    describe("preserves input after fatal euc-jp streaming errors", () => {
+        it("processes a restored ASCII byte before the next input", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            assertThrowWithMessage(() => decoder.decode(Uint8Array.of(0x8F, 0xA2, 0x20), { stream: true }), TypeError, "Decoder error");
+            assertSame(decoder.decode(Uint8Array.of(0xA1, 0xA1)), " \u3000");
+        });
+        it("processes restored and unread bytes before the next input", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            const encoded = Uint8Array.of(0x8F, 0xA2, 0x20, 0x41, 0x42);
+            assertThrowWithMessage(() => decoder.decode(encoded, { stream: true }), TypeError, "Decoder error");
+            assertSame(decoder.decode(Uint8Array.of(0xA1, 0xA1)), " AB\u3000");
+        });
+        it("flushes restored and unread bytes without additional input", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            const encoded = Uint8Array.of(0x8F, 0xA2, 0x20, 0x41, 0x42);
+            assertThrowWithMessage(() => decoder.decode(encoded, { stream: true }), TypeError, "Decoder error");
+            assertSame(decoder.decode(), " AB");
+            assertSame(decoder.decode(), "");
+        });
+        it("processes pending bytes when the next streaming input is empty", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            const encoded = Uint8Array.of(0x8F, 0xA2, 0x20, 0x41, 0x42);
+            assertThrowWithMessage(() => decoder.decode(encoded, { stream: true }), TypeError, "Decoder error");
+            assertSame(decoder.decode(new Uint8Array(0), { stream: true }), " AB");
+            assertSame(decoder.decode(Uint8Array.of(0xA1, 0xA1)), "\u3000");
+        });
+        it("copies unread input before returning a streaming error", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            const encoded = Uint8Array.of(0x8F, 0xA2, 0x20, 0x41, 0x42);
+            assertThrowWithMessage(() => decoder.decode(encoded, { stream: true }), TypeError, "Decoder error");
+            encoded.fill(0xFF);
+            assertSame(decoder.decode(Uint8Array.of(0xA1, 0xA1)), " AB\u3000");
+        });
+        it("retains unread input across repeated fatal streaming errors", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            const encoded = Uint8Array.of(0x8F, 0xA2, 0x20, 0xFF, 0x41);
+            assertThrowWithMessage(() => decoder.decode(encoded, { stream: true }), TypeError, "Decoder error");
+            assertThrowWithMessage(() => decoder.decode(Uint8Array.of(0x42), { stream: true }), TypeError, "Decoder error");
+            assertSame(decoder.decode(), "AB");
+        });
+        it("discards unread input when a final decode fails", () => {
+            const decoder = new TextDecoder("euc-jp", { fatal: true });
+            const encoded = Uint8Array.of(0x8F, 0xA2, 0x20, 0xFF, 0x41);
+            assertThrowWithMessage(() => decoder.decode(encoded, { stream: true }), TypeError, "Decoder error");
+            assertThrowWithMessage(() => decoder.decode(), TypeError, "Decoder error");
+            assertSame(decoder.decode(Uint8Array.of(0xA1, 0xA1)), "\u3000");
+        });
+    });
+    it("retains an unread UTF-8 lead byte after a fatal streaming error", () => {
+        const decoder = new TextDecoder("utf-8", { fatal: true });
+        assertThrowWithMessage(() => decoder.decode(Uint8Array.of(0xFD, 0xEF), { stream: true }), TypeError, "Decoder error");
+        // The unread 0xEF remains in the input queue and is incomplete at EOF.
+        assertThrowWithMessage(() => decoder.decode(), TypeError, "Decoder error");
+        assertSame(decoder.decode(), "");
+    });
+    it("completes an unread UTF-8 sequence with the next input after a fatal streaming error", () => {
+        const decoder = new TextDecoder("utf-8", { fatal: true });
+        assertThrowWithMessage(() => decoder.decode(Uint8Array.of(0xFD, 0xEF), { stream: true }), TypeError, "Decoder error");
+        assertSame(decoder.decode(Uint8Array.of(0xBB, 0xBF, 0x41)), "A");
+    });
     it("accepts encoding names case-insensitively", () => {
         const encodings = [
             { label: "utf-8", encoding: "utf-8" },
