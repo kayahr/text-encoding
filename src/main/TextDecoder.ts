@@ -151,7 +151,7 @@ export class TextDecoder implements globalThis.TextDecoder {
                 }
             }
             if (!stream) {
-                do {
+                while (true) {
                     result = this.decoder.decode(inputStream);
                     if (result === FINISHED) {
                         break;
@@ -163,7 +163,7 @@ export class TextDecoder implements globalThis.TextDecoder {
                             appendCodePoints(bufferedOutput.chunks, bufferedOutput.codePoints, result);
                         }
                     }
-                } while (!inputStream.isEndOfBuffer());
+                }
             }
             if (bufferedOutput != null) {
                 if (bufferedOutput.codePoints.length > 0) {

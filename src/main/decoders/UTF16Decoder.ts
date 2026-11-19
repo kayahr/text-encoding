@@ -31,6 +31,8 @@ export abstract class UTF16Decoder extends AbstractDecoder {
         const byte = buffer.read();
         if (byte === END_OF_BUFFER) {
             if (this.leadByte !== null || this.leadSurrogate !== null) {
+                this.leadByte = null;
+                this.leadSurrogate = null;
                 return this.fail();
             }
             return FINISHED;

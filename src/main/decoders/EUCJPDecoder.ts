@@ -43,7 +43,7 @@ export class EUCJPDecoder extends AbstractDecoder {
                 codePoint = (this.jis0212Flag ? jis0212 : jis0208)[(lead - 0xA1) * 94 + (byte - 0xA1)] || null;
             }
             this.jis0212Flag = false;
-            if (!inRange(byte, 0xA1, 0xFE)) {
+            if (isASCII(byte)) {
                 buffer.write(byte);
             }
             return codePoint ?? this.fail();
